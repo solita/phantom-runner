@@ -24,11 +24,13 @@ public @interface PhantomConfiguration {
 	String[] tests();
 	
 	/**
-	 * Base directory where the tests should be scanned, default is src/test/js
+	 * Base directory where the tests should be scanned relative to the working directory, default is src/test/js
 	 * @return
 	 */
 	String testsBaseDir() default "src/test/js";
 	
-	// TODO: different test framework support here
-	
+	/**
+	 * Interpreter type to be used when running the tests.
+	 */
+	JavascriptTestInterpreterConfiguration interpreter();
 }
