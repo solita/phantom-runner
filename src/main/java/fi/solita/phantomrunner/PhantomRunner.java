@@ -4,18 +4,18 @@ import java.io.File;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
+import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.Suite;
 import org.junit.runners.model.InitializationError;
-
-import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
 
 import fi.solita.phantomrunner.testinterpreter.JavascriptInterpreterException;
 import fi.solita.phantomrunner.testinterpreter.JavascriptTest;
@@ -23,13 +23,21 @@ import fi.solita.phantomrunner.testinterpreter.JavascriptTestInterpreter;
 
 public class PhantomRunner extends Suite {
 
+	private final JavascriptTestInterpreter interpreter;
 	private final Description master;
+	
+	private final PhantomProcess process;
+	
+	// this is a hackish solution since we really can't embed any extra data into JUnit Description objects
+	private Map<Description, JavascriptTest> jsTests = new HashMap<>();
 	
 	public PhantomRunner(Class<?> klass) throws InitializationError {
 		// whoopee, no Collections.emptyList() or ImmutableList due to Java generics
 		super(klass, new LinkedList<Runner>());
 		
+		this.interpreter = createInterpreter();
 		this.master = buildMaster();
+		this.process = new PhantomProcess(findClassAnnotation(PhantomConfiguration.class, true), interpreter);
 	}
 
 	@Override
@@ -48,9 +56,13 @@ public class PhantomRunner extends Suite {
 			if (child.isSuite()) {
 				runSuite(notifier, child);
 			} else {
-				notifier.fireTestStarted(child);
-				// TODO: in here the actual test is ran
-				notifier.fireTestFinished(child);
+				try {
+					notifier.fireTestStarted(child);
+					process.runTest(jsTests.get(child));
+					notifier.fireTestFinished(child);
+				} catch (Throwable t) {
+					notifier.fireTestFailure(new Failure(child, t));
+				}
 			}
 		}
 		notifier.fireTestFinished(suite);
@@ -87,14 +99,16 @@ public class PhantomRunner extends Suite {
 	}
 	
 	private Iterable<Description> parseJsTestFunctions(File jsFile) {
-		JavascriptTestInterpreter interpreter = createInterpreter();
+		List<JavascriptTest> tests = interpreter.listTestsFrom(jsFile);
+		List<Description> returned = new ArrayList<>();
 		
-		return Iterables.transform(interpreter.listTestsFrom(jsFile), new Function<JavascriptTest, Description>() {
-			@Override
-			public Description apply(JavascriptTest input) {
-				return Description.createTestDescription(getTestClass().getJavaClass(), input.getTestName());
-			}
-		});
+		for (JavascriptTest test : tests) {
+			Description desc = Description.createTestDescription(getTestClass().getJavaClass(), test.getTestName());
+			this.jsTests.put(desc, test);
+			returned.add(desc);
+		}
+		
+		return returned;
 	}
 
 	private JavascriptTestInterpreter createInterpreter() {

@@ -41,6 +41,13 @@
             <artifactId>guava</artifactId>
             <version>13.0</version>
         </dependency>
+        
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.2.1</version>
+        </dependency>
+
     </dependencies>
-    
+
 </project>

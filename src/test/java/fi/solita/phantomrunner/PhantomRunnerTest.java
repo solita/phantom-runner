@@ -10,7 +10,7 @@ import fi.solita.phantomrunner.qunit.QUnitTestInterpreter;
 		tests="**/*-test.js",
 		interpreter=@JavascriptTestInterpreterConfiguration(
 				interpreterClass=QUnitTestInterpreter.class,
-				libraryFilePaths="**/qunit.js"
+				libraryFilePaths="**/target/**/qunit.js"
 		))
 public class PhantomRunnerTest {
 

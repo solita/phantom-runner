@@ -7,4 +7,8 @@ public interface JavascriptTestInterpreter {
 
 	List<JavascriptTest> listTestsFrom(File jsFile);
 
+	String[] getLibPaths();
+
+	String getRunnerPath();
+
 }
