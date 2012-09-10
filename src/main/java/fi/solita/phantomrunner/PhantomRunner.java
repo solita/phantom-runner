@@ -23,25 +23,47 @@ import fi.solita.phantomrunner.testinterpreter.JavascriptTestInterpreter;
 
 public class PhantomRunner extends Suite {
 
+	private final Description master;
+	
 	public PhantomRunner(Class<?> klass) throws InitializationError {
 		// whoopee, no Collections.emptyList() or ImmutableList due to Java generics
 		super(klass, new LinkedList<Runner>());
+		
+		this.master = buildMaster();
 	}
 
 	@Override
 	public Description getDescription() {
+		return master;
+	}
+
+	@Override
+	public void run(RunNotifier notifier) {
+		runSuite(notifier, master);
+	}
+
+	private void runSuite(RunNotifier notifier, Description suite) {
+		notifier.fireTestStarted(suite);
+		for (Description child : suite.getChildren()) {
+			if (child.isSuite()) {
+				runSuite(notifier, child);
+			} else {
+				notifier.fireTestStarted(child);
+				// TODO: in here the actual test is ran
+				notifier.fireTestFinished(child);
+			}
+		}
+		notifier.fireTestFinished(suite);
+	}
+	
+	private Description buildMaster() {
 		Description master = Description.createSuiteDescription(getTestClass().getJavaClass());
 		for (Description child : buildJavascriptTestDescriptions()) {
 			master.addChild(child);
 		}
 		return master;
 	}
-
-	@Override
-	public void run(RunNotifier notifier) {
-		
-	}
-
+	
 	private Iterable<Description> buildJavascriptTestDescriptions() {
 		List<Description> descriptions = new ArrayList<>();
 		for (File f : scanForTests()) {
@@ -70,7 +92,7 @@ public class PhantomRunner extends Suite {
 		return Iterables.transform(interpreter.listTestsFrom(jsFile), new Function<JavascriptTest, Description>() {
 			@Override
 			public Description apply(JavascriptTest input) {
-				return Description.createSuiteDescription(input.getTestName());
+				return Description.createTestDescription(getTestClass().getJavaClass(), input.getTestName());
 			}
 		});
 	}
