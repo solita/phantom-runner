@@ -70,10 +70,9 @@ public class PhantomProcess {
 			
 			HttpPost post = new HttpPost("http://localhost:18080/run");
 			post.setEntity(entity);
-			
 			HttpResponse response = httpclient.execute(post);
 			new StreamPiper(response.getEntity().getContent(), System.out).run();
-			System.out.println();
+			
 		} catch (ClientProtocolException cpe) {
 			cpe.printStackTrace();
 		} catch (IOException e) {

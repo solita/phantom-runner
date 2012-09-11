@@ -1,7 +1,9 @@
-test("Another module test 1", function() {
-	ok( 1 == "1", "Passed!" );
-});
-
-test("Another module test 2", function() {
-	ok( 2 == "1", "Failed!" );
+describe("Suite from file 2", function() {
+	it("exists to test multi file support in PhantomRunner", function() {
+		expect(true).toBe(true);
+	});
+	
+	it("and also it may fail too", function() {
+		expect(true).not.toBe(true);
+	});
 });

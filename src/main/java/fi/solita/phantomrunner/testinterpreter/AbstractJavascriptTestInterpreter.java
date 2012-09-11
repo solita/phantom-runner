@@ -2,7 +2,6 @@ package fi.solita.phantomrunner.testinterpreter;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.codehaus.plexus.util.FileUtils;
@@ -29,6 +28,5 @@ public abstract class AbstractJavascriptTestInterpreter implements JavascriptTes
 		return libPaths;
 	}
 	
-	protected abstract List<String> testFunctionNames();
-	protected abstract List<JavascriptTest> createTestsFrom(String line);
+	protected abstract List<JavascriptTest> createTestsFrom(String data);
 }

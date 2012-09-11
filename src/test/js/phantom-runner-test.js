@@ -1,11 +1,15 @@
-test("First test", function() {
-	ok( 1 == "1", "Passed!" );
+describe("A suite", function() {
+	it("contains a specification with an expectation", function() {
+		expect(true).toBe(true);
+	});
 });
 
-test("Second test", function() {
-	ok( 2 == "1", "Failed!" );
-});
-
-asyncTest("Async test", function() {
+describe("Another suite", function() {
+	it("will do other checks", function() {
+		expect("foo").toBe("foo");
+	});
 	
+	it("and some specifications which may fail", function() {
+		expect("foo").toBe("bar");
+	})
 });

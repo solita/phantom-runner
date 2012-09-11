@@ -5,4 +5,6 @@ public interface JavascriptTest {
 	String getTestName();
 
 	String getTestData();
+	
+	boolean isSuite();
 }
