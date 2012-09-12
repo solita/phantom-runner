@@ -15,8 +15,6 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpParams;
 import org.codehaus.plexus.util.DirectoryScanner;
 
 import fi.solita.phantomrunner.stream.StreamPiper;
