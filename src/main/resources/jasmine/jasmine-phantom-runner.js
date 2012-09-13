@@ -15,9 +15,25 @@
 		}
 	};
 	
+	var page = null;
+	
 	var runHandler = function(request, response) {
+		console.log("Request to run test", request.post);
+		page.evaluate(function() {
+			
+		});
 		response.statusCode = 200;
-		var page = require('webpage').create();
+		response.write("");
+		response.close();
+	};
+	
+	var initHandler = function(request, response) {
+		// release previous page data from memory if any
+		if (page != null) {
+			page.release();
+		}
+		
+		page = require('webpage').create();
 		for (var key in libPaths) {
 			if (!page.injectJs(libPaths[key])) {
 				throw "Couldn't inject Javascript resource: " + libPaths[key];
@@ -26,7 +42,7 @@
 		page.onConsoleMessage = function (msg) { 
 			console.log(msg); 
 		};
-		
+
 		var result = page.evaluate(function(testData) {	
 			try {
 				window.eval(testData);
@@ -39,6 +55,8 @@
 			errorHandler(result);
 		}
 		
+		
+		response.statusCode = 200;
 		response.write("");
 		response.close();
 	};
@@ -48,6 +66,8 @@
 			handle: (function() {
 				if (url.indexOf("run") != -1) {
 					return runHandler;
+				} else if (url.indexOf("init") != -1) { 
+					return initHandler;
 				} else {
 					throw "Unsupported operation";
 				}

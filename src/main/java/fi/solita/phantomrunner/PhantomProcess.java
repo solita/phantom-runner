@@ -59,14 +59,22 @@ public class PhantomProcess {
 		}
 	}
 
+	public void initializeTestRun(String testFileData) {
+		post("init", testFileData);
+	}
+	
 	public void runTest(JavascriptTest javascriptTest) {
+		post("run", javascriptTest.getTestName());
+	}
+
+	private void post(String urlFragment, String postData) {
 		try {
 			
 			HttpClient httpclient = new DefaultHttpClient();
 			
-			HttpEntity entity = new StringEntity(javascriptTest.getTestData(), "UTF-8");
+			HttpEntity entity = new StringEntity(postData, "UTF-8");
 			
-			HttpPost post = new HttpPost("http://localhost:18080/run");
+			HttpPost post = new HttpPost("http://localhost:18080/" + urlFragment);
 			post.setEntity(entity);
 			HttpResponse response = httpclient.execute(post);
 			new StreamPiper(response.getEntity().getContent(), System.out).run();
@@ -77,7 +85,7 @@ public class PhantomProcess {
 			e.printStackTrace();
 		}
 	}
-
+	
 	private String[] convertToAbsolute(String[] libPaths) {
 		DirectoryScanner scanner = new DirectoryScanner();
 		scanner.setIncludes(libPaths);

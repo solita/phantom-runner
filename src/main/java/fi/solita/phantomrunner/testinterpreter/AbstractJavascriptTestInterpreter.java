@@ -1,26 +1,20 @@
 package fi.solita.phantomrunner.testinterpreter;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
-
-import org.codehaus.plexus.util.FileUtils;
 
 public abstract class AbstractJavascriptTestInterpreter implements JavascriptTestInterpreter {
 
 	private final String[] libPaths;
+	private final Class<?> testClass;
 	
-	public AbstractJavascriptTestInterpreter(String[] libPaths) {
+	public AbstractJavascriptTestInterpreter(String[] libPaths, Class<?> testClass) {
 		this.libPaths = libPaths;
+		this.testClass = testClass;
 	}
 
 	@Override
-	public List<JavascriptTest> listTestsFrom(File jsFile) {
-		try {
-			return createTestsFrom(FileUtils.fileRead(jsFile, "UTF-8"));
-		} catch (IOException e) {
-			throw new JavascriptInterpreterException("Error occured while reading Javascript test file", e);
-		}
+	public List<JavascriptTest> listTestsFrom(String data) {
+		return createTestsFrom(data, testClass);
 	}
 	
 	@Override
@@ -28,5 +22,5 @@ public abstract class AbstractJavascriptTestInterpreter implements JavascriptTes
 		return libPaths;
 	}
 	
-	protected abstract List<JavascriptTest> createTestsFrom(String data);
+	protected abstract List<JavascriptTest> createTestsFrom(String data, Class<?> testClass);
 }
