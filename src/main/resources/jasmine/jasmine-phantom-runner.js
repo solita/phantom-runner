@@ -18,9 +18,14 @@
 	var page = null;
 	
 	var runHandler = function(request, response) {
-		console.log("Request to run test", request.post);
+		
 		page.evaluate(function() {
-			
+			/*console.log(jasmine.getEnv().currentRunner().suites());
+			console.log("\n\n\n");
+			 
+			for (var key in jasmine.getEnv().currentRunner().suites()) {
+				
+			}*/
 		});
 		response.statusCode = 200;
 		response.write("");

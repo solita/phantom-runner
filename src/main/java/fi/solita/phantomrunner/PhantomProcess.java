@@ -2,6 +2,7 @@ package fi.solita.phantomrunner;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -67,7 +68,7 @@ public class PhantomProcess {
 		post("run", javascriptTest.getTestName());
 	}
 
-	private void post(String urlFragment, String postData) {
+	private InputStream post(String urlFragment, String postData) {
 		try {
 			
 			HttpClient httpclient = new DefaultHttpClient();
@@ -78,11 +79,11 @@ public class PhantomProcess {
 			post.setEntity(entity);
 			HttpResponse response = httpclient.execute(post);
 			new StreamPiper(response.getEntity().getContent(), System.out).run();
-			
+			return response.getEntity().getContent();
 		} catch (ClientProtocolException cpe) {
-			cpe.printStackTrace();
+			throw new PhantomProcessException(cpe);
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new PhantomProcessException(e);
 		}
 	}
 	
