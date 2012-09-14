@@ -25,7 +25,7 @@ public class PhantomRunner extends Suite {
 		super(klass, new LinkedList<Runner>());
 		
 		JavascriptTestInterpreter interpreter = createInterpreter();
-		this.master = new MasterJavascriptTest(getTestClass().getJavaClass(), interpreter);
+		this.master = new MasterJavascriptTest(getTestClass().getJavaClass(), interpreter, findPhantomConfigAnnotation().injectLibs());
 		this.process = new PhantomProcess(findPhantomConfigAnnotation(), interpreter);
 	}
 
@@ -44,9 +44,16 @@ public class PhantomRunner extends Suite {
 		Class<? extends JavascriptTestInterpreter> interpreterClass = interpreterConfig.interpreterClass();
 		
 		try {
-			return interpreterClass
-				.getConstructor(Class.class)
-				.newInstance(getTestClass().getClass());
+			if (interpreterConfig.libraryFilePaths()[0].length() > 0) {
+				return interpreterClass
+						.getConstructor(String[].class, Class.class)
+						.newInstance((Object) interpreterConfig.libraryFilePaths(), getTestClass().getClass());
+			} else {
+				return interpreterClass
+						.getConstructor(Class.class)
+						.newInstance(getTestClass().getClass());
+			}
+
 		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			throw new JavascriptInterpreterException("Couldn't create interpreter", e);
 		}

@@ -16,12 +16,14 @@ public final class MasterJavascriptTest implements JavascriptTest {
 	private final Class<?> testClass;
 	private final Map<String, List<JavascriptTest>> tests;
 	private final JavascriptTestInterpreter interpreter;
+	private final String[] extLibs;
 	
 	private Description cache;
 	
-	public MasterJavascriptTest(Class<?> testClass, JavascriptTestInterpreter interpreter) {
+	public MasterJavascriptTest(Class<?> testClass, JavascriptTestInterpreter interpreter, String[] extLibs) {
 		this.testClass = testClass;
 		this.interpreter = interpreter;
+		this.extLibs = extLibs;
 		
 		MasterJavascriptListener listener = new MasterJavascriptListener();
 		new JavascriptTestScanner(testClass, interpreter).parseTests(listener);
@@ -43,7 +45,7 @@ public final class MasterJavascriptTest implements JavascriptTest {
 	public void run(RunNotifier notifier, PhantomProcess process) {
 		notifier.fireTestStarted(cache);
 		for (Entry<String, List<JavascriptTest>> testFile : tests.entrySet()) {
-			process.initializeTestRun(testFile.getKey(), interpreter.getLibPaths());
+			process.initializeTestRun(testFile.getKey(), interpreter.getLibPaths(), extLibs);
 			for (JavascriptTest test : testFile.getValue()) {
 				test.run(notifier, process);
 			}

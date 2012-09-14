@@ -21,6 +21,12 @@
                 </configuration>
             </plugin>
         </plugins>
+        
+        <testResources>
+            <testResource>
+                <directory>src/test/js</directory>
+            </testResource>
+        </testResources>
     </build>
     
     <dependencies>

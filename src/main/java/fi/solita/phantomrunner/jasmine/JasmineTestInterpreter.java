@@ -13,7 +13,11 @@ import fi.solita.phantomrunner.util.JavascriptBlockUtils;
 public class JasmineTestInterpreter extends AbstractJavascriptTestInterpreter {
 
 	public JasmineTestInterpreter(Class<?> testClass) {
-		super(new String[]{"classpath:jasmine/jasmine.js"}, testClass);
+		this(new String[]{"classpath:jasmine/jasmine.js"}, testClass);
+	}
+	
+	public JasmineTestInterpreter(String[] libPaths, Class<?> testClass) {
+		super(libPaths, testClass);
 	}
 
 	@Override

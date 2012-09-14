@@ -30,6 +30,13 @@
 				window.eval(libData);
 			}, postData.libDatas[key]);
 		}
+		
+		for (var key in postData.extLibs) {
+			page.evaluate(function(libData) {
+				window.eval(libData);
+			}, postData.extLibs[key]);
+		}
+		
 		page.onConsoleMessage = function (msg) { 
 			console.log(msg); 
 		};

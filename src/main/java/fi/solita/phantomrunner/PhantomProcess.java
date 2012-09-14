@@ -64,11 +64,12 @@ public class PhantomProcess {
 		}
 	}
 
-	public void initializeTestRun(String testFileData, String[] libPaths) {
+	public void initializeTestRun(String testFileData, String[] libPaths, String[] extLibs) {
 		try {
 			Map<String, Object> postData = new HashMap<>();
 			postData.put("testFileData", testFileData);
 			postData.put("libDatas", convertToResourceStrings(libPaths));
+			postData.put("extLibs", extLibs.length == 0 || extLibs[0].length() == 0 ? "" : convertToResourceStrings(extLibs));
 			
 			post("init", new ObjectMapper().writer().writeValueAsString(postData));
 		} catch (IOException e) {
@@ -93,7 +94,7 @@ public class PhantomProcess {
 			}
 			return result;
 		} catch (IOException ioe) {
-			throw new RuntimeException(ioe);
+			throw new PhantomProcessException(ioe);
 		}
 	}
 
@@ -110,7 +111,7 @@ public class PhantomProcess {
 		try {
 			return interpreter.evaluateResult(new ObjectMapper().readTree(responseData));
 		} catch (IOException e) {
-			throw new RuntimeException(e);
+			throw new PhantomProcessException(e);
 		}
 	}
 
