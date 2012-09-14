@@ -10,7 +10,7 @@ import fi.solita.phantomrunner.jasmine.JasmineTestInterpreter;
 		tests="**/*-test.js",
 		interpreter=@JavascriptTestInterpreterConfiguration(
 				interpreterClass=JasmineTestInterpreter.class,
-				libraryFilePaths="**/target/**/jasmine.js"
+				libraryFilePaths="classpath:jasmine/jasmine.js"
 		))
 public class PhantomRunnerTest {
 

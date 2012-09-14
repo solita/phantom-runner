@@ -1,9 +1,14 @@
 package fi.solita.phantomrunner.util;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.codehaus.plexus.util.IOUtil;
 
 public class Strings {
 
@@ -39,5 +44,11 @@ public class Strings {
 			builder.append(line);
 		}
 		return builder.toString();
+	}
+
+	public static String streamToString(InputStream stream) throws IOException {
+		StringWriter writer = new StringWriter();
+		IOUtil.copy(stream, writer, "UTF-8");
+		return writer.toString();
 	}
 }

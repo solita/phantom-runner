@@ -2,8 +2,6 @@
 	var server = require('webserver').create();
 	var system = require('system');
 
-	var libPaths = system.args.slice(1);
-	
 	var errorHandler = function(result) {
 		console.log("Error occured");
 		for (var key in result.error) {
@@ -17,21 +15,6 @@
 	
 	var page = null;
 	
-	var runHandler = function(request, response) {
-		
-		page.evaluate(function() {
-			/*console.log(jasmine.getEnv().currentRunner().suites());
-			console.log("\n\n\n");
-			 
-			for (var key in jasmine.getEnv().currentRunner().suites()) {
-				
-			}*/
-		});
-		response.statusCode = 200;
-		response.write("");
-		response.close();
-	};
-	
 	var initHandler = function(request, response) {
 		// release previous page data from memory if any
 		if (page != null) {
@@ -39,10 +22,13 @@
 		}
 		
 		page = require('webpage').create();
-		for (var key in libPaths) {
-			if (!page.injectJs(libPaths[key])) {
-				throw "Couldn't inject Javascript resource: " + libPaths[key];
-			}
+		
+		var postData = JSON.parse(request.post); // content is JSON data
+		
+		for (var key in postData.libDatas) {
+			page.evaluate(function(libData) {
+				window.eval(libData);
+			}, postData.libDatas[key]);
 		}
 		page.onConsoleMessage = function (msg) { 
 			console.log(msg); 
@@ -54,7 +40,7 @@
 			} catch (e) {
 				return {error: e};
 			}
-		}, request.post);
+		}, postData.testFileData);
 		
 		if (result && result.error) {
 			errorHandler(result);
@@ -65,7 +51,66 @@
 		response.write("");
 		response.close();
 	};
-
+	
+	var runHandler = function(request, response) {
+		var resultJson = page.evaluate(function(request) {
+			var isSuiteRequest = function(post) {
+				return post.indexOf("#!#") == -1;
+			};
+			
+			var parseSuiteName = function(post) {
+				return post.split("#!#")[0];
+			};
+			
+			var parseTestName = function(post) {
+				return post.split("#!#")[1];
+			};
+			
+			var findSuite = function(post) {
+				var suiteName = parseSuiteName(post);
+				var suites = jasmine.getEnv().currentRunner().suites();
+				for (var i = 0; i < suites.length; i++) {
+					if (suites[i].description === suiteName) {
+						return suites[i];
+					}
+				}
+				throw "No suite with name " + suiteName + " found, check your test initialization";
+			};
+			
+			var findTest = function(post) {
+				var suite = findSuite(post);
+				var testName = parseTestName(post);
+				for (var i = 0; i < suite.children().length; i++) {
+					if (suite.children()[i].description === testName) {
+						return suite.children()[i];
+					}
+				}
+				throw "No test with name " + testName + " found, check your test initialization";
+			};
+			
+			if (isSuiteRequest(request.post)) {
+				findSuite(request.post).execute();
+			} else {
+				findTest(request.post).execute();				
+			}
+			
+			var results = jasmine.getEnv().currentRunner().results();
+			
+			var jsonResult = {
+				passed: results.passed(),
+				totalCount: results.totalCount,
+				passedCount: results.passedCount,
+				failedCount: results.failedCount
+			};
+			
+			return JSON.stringify(jsonResult);
+		}, request);
+		
+		response.statusCode = 200;
+		response.write(resultJson);
+		response.close();
+	};
+	
 	var parseHandler = function(url) {
 		return {
 			handle: (function() {

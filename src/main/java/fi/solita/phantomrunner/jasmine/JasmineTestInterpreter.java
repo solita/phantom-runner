@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import fi.solita.phantomrunner.testinterpreter.AbstractJavascriptTestInterpreter;
 import fi.solita.phantomrunner.testinterpreter.JavascriptTest;
 import fi.solita.phantomrunner.util.JavascriptBlockUtils;
@@ -30,6 +32,11 @@ public class JasmineTestInterpreter extends AbstractJavascriptTestInterpreter {
 		}
 		
 		return tests;
+	}
+
+	@Override
+	public boolean evaluateResult(JsonNode resultTree) {
+		return resultTree.get("passed").asBoolean();
 	}
 
 }

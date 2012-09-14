@@ -15,27 +15,19 @@ public final class MasterJavascriptTest implements JavascriptTest {
 
 	private final Class<?> testClass;
 	private final Map<String, List<JavascriptTest>> tests;
+	private final JavascriptTestInterpreter interpreter;
 	
 	private Description cache;
 	
 	public MasterJavascriptTest(Class<?> testClass, JavascriptTestInterpreter interpreter) {
 		this.testClass = testClass;
+		this.interpreter = interpreter;
 		
 		MasterJavascriptListener listener = new MasterJavascriptListener();
 		new JavascriptTestScanner(testClass, interpreter).parseTests(listener);
 		this.tests = listener.getTests();
 	}
 	
-	@Override
-	public String getTestName() {
-		return testClass.getName();
-	}
-
-	@Override
-	public String getTestData() {
-		return "";
-	}
-
 	@Override
 	public Description asDescription(Class<?> parentTestClass) {
 		if (cache == null) {
@@ -51,7 +43,7 @@ public final class MasterJavascriptTest implements JavascriptTest {
 	public void run(RunNotifier notifier, PhantomProcess process) {
 		notifier.fireTestStarted(cache);
 		for (Entry<String, List<JavascriptTest>> testFile : tests.entrySet()) {
-			process.initializeTestRun(testFile.getKey());
+			process.initializeTestRun(testFile.getKey(), interpreter.getLibPaths());
 			for (JavascriptTest test : testFile.getValue()) {
 				test.run(notifier, process);
 			}
@@ -59,7 +51,27 @@ public final class MasterJavascriptTest implements JavascriptTest {
 		notifier.fireTestFinished(cache);
 	}
 
+	@Override
+	public String getTestName() {
+		return testClass.getName();
+	}
 
+	@Override
+	public String getTestData() {
+		return "";
+	}
+	
+	@Override
+	public boolean isTest() {
+		return false;
+	}
+
+	@Override
+	public String getSuiteName() {
+		return "";
+	}
+	
+	
 	private static class MasterJavascriptListener implements TestScannerListener {
 		
 		private final Map<String, List<JavascriptTest>> tests = new HashMap<>();
@@ -73,4 +85,5 @@ public final class MasterJavascriptTest implements JavascriptTest {
 			return tests;
 		}
 	}
+
 }

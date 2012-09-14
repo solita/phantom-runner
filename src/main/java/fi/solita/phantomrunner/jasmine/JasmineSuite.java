@@ -67,6 +67,16 @@ public class JasmineSuite implements JavascriptTest {
 	}
 	
 	@Override
+	public boolean isTest() {
+		return false;
+	}
+
+	@Override
+	public String getSuiteName() {
+		return getTestName();
+	}
+	
+	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder("Jasmine Test Suite:\n");
 		builder.append("  Suite data:\n");

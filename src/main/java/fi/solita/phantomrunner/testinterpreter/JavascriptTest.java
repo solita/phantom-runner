@@ -14,4 +14,8 @@ public interface JavascriptTest {
 	Description asDescription(Class<?> parentTestClass);
 
 	void run(RunNotifier notifier, PhantomProcess process);
+
+	boolean isTest();
+
+	String getSuiteName();
 }
