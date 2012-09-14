@@ -14,6 +14,5 @@ import fi.solita.phantomrunner.testinterpreter.JavascriptTestInterpreter;
 public @interface JavascriptTestInterpreterConfiguration {
 
 	Class<? extends JavascriptTestInterpreter> interpreterClass();
-	String[] libraryFilePaths();
 	
 }

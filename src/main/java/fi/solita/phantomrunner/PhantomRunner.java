@@ -45,8 +45,8 @@ public class PhantomRunner extends Suite {
 		
 		try {
 			return interpreterClass
-				.getConstructor(String[].class, Class.class)
-				.newInstance((Object) interpreterConfig.libraryFilePaths(), getTestClass().getClass());
+				.getConstructor(Class.class)
+				.newInstance(getTestClass().getClass());
 		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			throw new JavascriptInterpreterException("Couldn't create interpreter", e);
 		}
