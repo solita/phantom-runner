@@ -9,6 +9,10 @@
     <name>PhantomRunner</name>
     <description>Javascript test integration with JUnit and PhantomJS headless browser</description>
 
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
     <build>
         <plugins>
             <plugin>
