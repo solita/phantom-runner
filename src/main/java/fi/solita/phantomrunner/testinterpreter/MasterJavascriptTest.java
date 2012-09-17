@@ -9,7 +9,7 @@ import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 
 import fi.collin.util.collections.UnmodifiableLinkedReferencingList;
-import fi.solita.phantomrunner.PhantomProcess;
+import fi.solita.phantomrunner.jetty.PhantomProcessNotifier;
 
 public final class MasterJavascriptTest implements JavascriptTest {
 
@@ -42,12 +42,12 @@ public final class MasterJavascriptTest implements JavascriptTest {
 	}
 
 	@Override
-	public void run(RunNotifier notifier, PhantomProcess process) {
+	public void run(RunNotifier notifier, PhantomProcessNotifier processNotifier) {
 		notifier.fireTestStarted(cache);
 		for (Entry<String, List<JavascriptTest>> testFile : tests.entrySet()) {
-			process.initializeTestRun(testFile.getKey(), interpreter.getLibPaths(), extLibs);
+			processNotifier.initializeTestRun(testFile.getKey(), interpreter.getLibPaths(), extLibs);
 			for (JavascriptTest test : testFile.getValue()) {
-				test.run(notifier, process);
+				test.run(notifier, processNotifier);
 			}
 		}
 		notifier.fireTestFinished(cache);

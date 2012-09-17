@@ -4,6 +4,8 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import fi.solita.phantomrunner.jetty.PhantomWebSocketHandler;
+
 public interface JavascriptTestInterpreter {
 
 	List<JavascriptTest> listTestsFrom(String data);
@@ -13,5 +15,7 @@ public interface JavascriptTestInterpreter {
 	String getRunnerPath();
 
 	boolean evaluateResult(JsonNode resultTree);
+
+	PhantomWebSocketHandler getHandler();
 
 }

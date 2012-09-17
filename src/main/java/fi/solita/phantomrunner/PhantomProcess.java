@@ -59,6 +59,7 @@ public class PhantomProcess {
 					phantomProcess.destroy();
 				}
 			});
+			
 		} catch (IOException e) {
 			throw new PhantomProcessException("Couldn't start PhantomJS process, check your configuration", e);
 		}

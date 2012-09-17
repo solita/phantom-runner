@@ -52,4 +52,9 @@ public @interface PhantomConfiguration {
 	 * Interpreter type to be used when running the tests.
 	 */
 	JavascriptTestInterpreterConfiguration interpreter();
+
+	/**
+	 * TODO: document me!
+	 */
+	String resourceBase() default "file://./src/main/resources";
 }

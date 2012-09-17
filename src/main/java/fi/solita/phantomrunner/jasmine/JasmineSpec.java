@@ -1,10 +1,14 @@
 package fi.solita.phantomrunner.jasmine;
 
+import junit.framework.AssertionFailedError;
+
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 
-import fi.solita.phantomrunner.PhantomProcess;
+import com.fasterxml.jackson.databind.JsonNode;
+
+import fi.solita.phantomrunner.jetty.PhantomProcessNotifier;
 import fi.solita.phantomrunner.testinterpreter.JavascriptTest;
 import fi.solita.phantomrunner.util.ObjectMemoizer;
 import fi.solita.phantomrunner.util.ParametrizedFactory;
@@ -38,10 +42,13 @@ public class JasmineSpec implements JavascriptTest {
 	}
 
 	@Override
-	public void run(RunNotifier notifier, PhantomProcess process) {
+	public void run(RunNotifier notifier, PhantomProcessNotifier processNotifier) {
 		notifier.fireTestStarted(description.get());
 		try {
-			process.runTest(this);
+			JsonNode result = processNotifier.runTest(this);
+			if (!result.get("passed").asBoolean()) {
+				throw new AssertionFailedError();
+			}
 			notifier.fireTestFinished(description.get());
 		} catch (Throwable t) {
 			notifier.fireTestFailure(new Failure(description.get(), t));

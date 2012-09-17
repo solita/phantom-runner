@@ -6,11 +6,14 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import fi.solita.phantomrunner.jetty.PhantomWebSocketHandler;
 import fi.solita.phantomrunner.testinterpreter.AbstractJavascriptTestInterpreter;
 import fi.solita.phantomrunner.testinterpreter.JavascriptTest;
 import fi.solita.phantomrunner.util.JavascriptBlockUtils;
 
 public class JasmineTestInterpreter extends AbstractJavascriptTestInterpreter {
+
+	private final PhantomWebSocketHandler handler;
 
 	public JasmineTestInterpreter(Class<?> testClass) {
 		this(new String[]{"classpath:jasmine/jasmine.js"}, testClass);
@@ -18,6 +21,8 @@ public class JasmineTestInterpreter extends AbstractJavascriptTestInterpreter {
 	
 	public JasmineTestInterpreter(String[] libPaths, Class<?> testClass) {
 		super(libPaths, testClass);
+		
+		handler = new PhantomWebSocketHandler();
 	}
 
 	@Override
@@ -25,6 +30,11 @@ public class JasmineTestInterpreter extends AbstractJavascriptTestInterpreter {
 		return new File(getClass().getClassLoader().getResource("jasmine/jasmine-phantom-runner.js").getFile()).getAbsolutePath();
 	}
 
+	@Override
+	public PhantomWebSocketHandler getHandler() {
+		return handler;
+	}
+	
 	@Override
 	protected List<JavascriptTest> createTestsFrom(String data, Class<?> testClass) {
 		List<JavascriptTest> tests = new ArrayList<>();
