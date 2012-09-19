@@ -30,7 +30,7 @@ public class PhantomRunner extends Suite {
 		JavascriptTestInterpreter interpreter = createInterpreter();
 		
 		PhantomConfiguration config = findPhantomConfigAnnotation();
-		
+				
 		this.server = new PhantomJettyServer(interpreter, config.resourceBase()).start();
 		this.processNotifier = this.server.createNotifier();
 		this.master = new MasterJavascriptTest(getTestClass().getJavaClass(), interpreter, config.injectLibs());
@@ -45,6 +45,13 @@ public class PhantomRunner extends Suite {
 	@Override
 	public void run(RunNotifier notifier) {
 		master.run(notifier, processNotifier);
+		
+		try {
+			process.stop();
+			server.stop();
+		} catch (Exception e) {
+			// ignore since these exceptions are irrelevant
+		}
 	}
 		
 	private JavascriptTestInterpreter createInterpreter() {

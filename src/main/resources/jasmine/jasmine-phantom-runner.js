@@ -29,17 +29,20 @@
 		}
 		
 		page = require('webpage').create();
+		page.onResourceRequested = function (request) {
+		    console.log('Request ' + JSON.stringify(request, undefined, 4));
+		};
 		
 		for (var key in data.libDatas) {
-			page.evaluate(function(libData) {
-				window.eval(libData);
-			}, data.libDatas[key]);
+			if (!page.injectJs(data.libDatas[key])) {
+			    throw "Failed to load " + data.libDatas[key];
+			}
 		}
 		
 		for (var key in data.extLibs) {
-			page.evaluate(function(libData) {
-				window.eval(libData);
-			}, data.extLibs[key]);
+		    if (!page.injectJs(data.extLibs[key])) {
+		        throw "Failed to load " + data.extLibs[key];
+		    }
 		}
 		
 		page.onConsoleMessage = function (msg) { 
@@ -78,6 +81,7 @@
 			var findSuite = function(testName) {
 				var suiteName = parseSuiteName(testName);
 				var suites = jasmine.getEnv().currentRunner().suites();
+				
 				for (var i = 0; i < suites.length; i++) {
 					if (suites[i].description === suiteName) {
 						return suites[i];

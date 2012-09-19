@@ -15,6 +15,9 @@ public class PhantomJettyServer {
 	private final PhantomWebSocketHandler interpreterHandler;
 	
 	public PhantomJettyServer(JavascriptTestInterpreter interpreter, String resourceBase) {
+		// we don't want to see the Jetty logging, disable it
+		org.eclipse.jetty.util.log.Log.setLog(new DiscardingJettyLogger());
+		
 		this.server = new Server(18080);
 		
 		this.interpreterHandler = interpreter.getHandler();

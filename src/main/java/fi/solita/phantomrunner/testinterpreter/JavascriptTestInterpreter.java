@@ -10,6 +10,8 @@ public interface JavascriptTestInterpreter {
 
 	List<JavascriptTest> listTestsFrom(String data);
 
+	String getTestHTML(String[] additionalLibraries, String testFilePath);
+	
 	String[] getLibPaths();
 
 	String getRunnerPath();

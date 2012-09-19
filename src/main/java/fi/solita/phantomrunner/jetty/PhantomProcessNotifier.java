@@ -13,7 +13,6 @@ import com.google.common.collect.ImmutableMap;
 
 import fi.solita.phantomrunner.PhantomProcessException;
 import fi.solita.phantomrunner.testinterpreter.JavascriptTest;
-import fi.solita.phantomrunner.util.Strings;
 
 public class PhantomProcessNotifier {
 
@@ -68,7 +67,7 @@ public class PhantomProcessNotifier {
 			for (int i = 0; i < libPaths.length; i++) {
 				String data = resourceCache.get(libPaths[i]);
 				if (data == null) {
-					data = Strings.streamToString(loader.getResource(libPaths[i]).getInputStream());
+					data = loader.getResource(libPaths[i]).getFile().getAbsolutePath();
 					resourceCache.put(libPaths[i], data);
 				}
 				result[i] = data;

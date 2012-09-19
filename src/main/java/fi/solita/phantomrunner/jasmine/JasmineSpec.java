@@ -46,6 +46,11 @@ public class JasmineSpec implements JavascriptTest {
 		notifier.fireTestStarted(description.get());
 		try {
 			JsonNode result = processNotifier.runTest(this);
+			if (!result.has("passed")) {
+			    // oops something went terribly terribly wrong, raise an error
+			    throw new RuntimeException("Error occured in Javascript evaluation, see console");
+			}
+			
 			if (!result.get("passed").asBoolean()) {
 				throw new AssertionFailedError();
 			}

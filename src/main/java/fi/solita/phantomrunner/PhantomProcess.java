@@ -64,6 +64,10 @@ public class PhantomProcess {
 			throw new PhantomProcessException("Couldn't start PhantomJS process, check your configuration", e);
 		}
 	}
+	
+	public void stop() {
+		this.phantomProcess.destroy();
+	}
 
 	public void initializeTestRun(String testFileData, String[] libPaths, String[] extLibs) {
 		try {
@@ -133,7 +137,4 @@ public class PhantomProcess {
 			throw new PhantomProcessException(e);
 		}
 	}
-	
-
-	
 }
