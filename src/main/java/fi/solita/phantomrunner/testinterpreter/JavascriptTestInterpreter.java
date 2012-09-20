@@ -13,7 +13,7 @@ public interface JavascriptTestInterpreter {
 	String getTestHTML(String[] additionalLibraries, String testFilePath);
 	
 	String[] getLibPaths();
-
+	
 	String getRunnerPath();
 
 	boolean evaluateResult(JsonNode resultTree);

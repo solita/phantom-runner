@@ -29,11 +29,8 @@
 		}
 		
 		page = require('webpage').create();
-		page.onResourceRequested = function (request) {
-		    console.log('Request ' + JSON.stringify(request, undefined, 4));
-		};
 		
-		for (var key in data.libDatas) {
+		/*for (var key in data.libDatas) {
 			if (!page.injectJs(data.libDatas[key])) {
 			    throw "Failed to load " + data.libDatas[key];
 			}
@@ -43,23 +40,14 @@
 		    if (!page.injectJs(data.extLibs[key])) {
 		        throw "Failed to load " + data.extLibs[key];
 		    }
-		}
+		}*/
 		
 		page.onConsoleMessage = function (msg) { 
 			console.log(msg); 
 		};
 
-		var result = page.evaluate(function(testData) {	
-			try {
-				window.eval(testData);
-			} catch (e) {
-				return {error: e};
-			}
-		}, data.testFileData);
-		
-		if (result && result.error) {
-			errorHandler(result);
-		}
+		// set the provided HTML as page content
+		page.content = data.testFileData;
 		
 		ws.send(JSON.stringify({}));
 	};

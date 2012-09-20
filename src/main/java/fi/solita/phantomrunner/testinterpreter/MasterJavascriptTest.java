@@ -50,14 +50,18 @@ public final class MasterJavascriptTest implements JavascriptTest {
 			}
 		}
 		return cache;
-	}
+	}  
 
 	@Override
 	public void run(RunNotifier notifier, PhantomProcessNotifier processNotifier) {
 		notifier.fireTestStarted(cache);
 		for (JavascriptTestFile testFile : testFiles) {
-		    System.out.println(interpreter.getTestHTML(extLibs, testFile.getFilePath()));
-			processNotifier.initializeTestRun(testFile.getFileData(), interpreter.getLibPaths(), extLibs);
+			
+		    processNotifier.initializeTestRun(
+			        interpreter.getTestHTML(extLibs, testFile.getFilePath()), 
+			        interpreter.getLibPaths(), 
+			        extLibs);
+		    
 			for (JavascriptTest test : testFile.getTests()) {
 				test.run(notifier, processNotifier);
 			}
