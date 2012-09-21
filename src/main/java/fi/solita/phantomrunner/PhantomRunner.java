@@ -44,6 +44,10 @@ public class PhantomRunner extends Suite {
 
 	@Override
 	public void run(RunNotifier notifier) {
+	    // Maven doesn't necessarily call getDescription so we need to invoke it in here to ensure
+	    // all descriptions are cached properly
+	    getDescription();
+	    
 		master.run(notifier, processNotifier);
 		
 		try {

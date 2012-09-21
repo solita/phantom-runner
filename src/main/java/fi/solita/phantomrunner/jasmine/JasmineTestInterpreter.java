@@ -113,6 +113,12 @@ public class JasmineTestInterpreter extends AbstractJavascriptTestInterpreter {
                 .text(Strings.streamToString(resLoader.getResource(libPath).getInputStream()));
     }
     
+    /**
+     * This extraction is done because runner file is inside a jar package and thus it is impossible to
+     * reference from PhantomJS. We cannot also pass it's content for PhantomJS since PhantomJS expects
+     * to get a file URI reference as an command line argument which it will use to command itself. Thus
+     * we'll extract the file into current user's temporary directory and reference it from there.
+     */
     private File extractRunnerIntoTempDirectory() {
         try {
             final File tempDir = Files.createTempDir();
