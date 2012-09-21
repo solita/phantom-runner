@@ -1,17 +1,22 @@
 package fi.solita.phantomrunner;
 
-import org.junit.runner.RunWith;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
-import fi.solita.phantomrunner.jasmine.JasmineTestInterpreter;
+import org.junit.Test;
+import org.junit.runner.JUnitCore;
+import org.junit.runner.Result;
 
-@RunWith(PhantomRunner.class)
-@PhantomConfiguration(
-		phantomPath="phantomjs", 
-		tests="**/*-test.js",
-		interpreter=@JavascriptTestInterpreterConfiguration(
-				interpreterClass=JasmineTestInterpreter.class,
-				libraryFilePaths="classpath:jasmine/jasmine.js"
-		))
+
 public class PhantomRunnerTest {
-
+    
+    @Test
+    public void testRunnerWithJasmineTests() {
+        Result result = new JUnitCore().run(PhantomRunnerTestHolder.class);
+        
+        // 6 == PhantomRunnerTestHolder + 5 Jasmine specs
+        assertEquals(6, result.getRunCount());
+        assertEquals(2, result.getFailureCount());
+        assertFalse(result.wasSuccessful());
+    }
 }

@@ -52,7 +52,7 @@ public class JasmineSpec implements JavascriptTest {
 			}
 			
 			if (!result.get("passed").asBoolean()) {
-				throw new AssertionFailedError();
+				throw new AssertionFailedError(result.get("failMessage").asText());
 			}
 			notifier.fireTestFinished(description.get());
 		} catch (Throwable t) {

@@ -30,18 +30,6 @@
 		
 		page = require('webpage').create();
 		
-		/*for (var key in data.libDatas) {
-			if (!page.injectJs(data.libDatas[key])) {
-			    throw "Failed to load " + data.libDatas[key];
-			}
-		}
-		
-		for (var key in data.extLibs) {
-		    if (!page.injectJs(data.extLibs[key])) {
-		        throw "Failed to load " + data.extLibs[key];
-		    }
-		}*/
-		
 		page.onConsoleMessage = function (msg) { 
 			console.log(msg); 
 		};
@@ -97,11 +85,17 @@
 			
 			var results = jasmine.getEnv().currentRunner().results();
 			
+			var failMessage = "";
+			if (!results.passed()) {
+			    failMessage = "Jasmine spec '" + parseTestName(data.testName) + "' in suite '" + parseSuiteName(data.testName) + "' failed";
+			}
+			
 			var jsonResult = {
 				passed: results.passed(),
 				totalCount: results.totalCount,
 				passedCount: results.passedCount,
-				failedCount: results.failedCount
+				failedCount: results.failedCount,
+				failMessage: failMessage
 			};
 			
 			return JSON.stringify(jsonResult);

@@ -54,7 +54,6 @@ public final class MasterJavascriptTest implements JavascriptTest {
 
 	@Override
 	public void run(RunNotifier notifier, PhantomProcessNotifier processNotifier) {
-		notifier.fireTestStarted(cache);
 		for (JavascriptTestFile testFile : testFiles) {
 			
 		    processNotifier.initializeTestRun(
@@ -66,7 +65,6 @@ public final class MasterJavascriptTest implements JavascriptTest {
 				test.run(notifier, processNotifier);
 			}
 		}
-		notifier.fireTestFinished(cache);
 	}
 
 	@Override
