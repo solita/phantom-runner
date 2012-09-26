@@ -11,59 +11,59 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class PhantomRunnerWebSocket implements WebSocket.OnTextMessage {
 
-	private final AtomicReference<Connection> connection = new AtomicReference<>();
-	private final List<PhantomMessageListener> listeners = new CopyOnWriteArrayList<>();
-	private final Object socketLock = new Object();
-	
-	PhantomRunnerWebSocket() {
-	}
-	
-	@Override
-	public void onOpen(Connection connection) {
-		this.connection.set(connection);
-		
-		synchronized (socketLock) {
-			socketLock.notifyAll();
-		}
-	}
+    private final AtomicReference<Connection> connection = new AtomicReference<>();
+    private final List<PhantomMessageListener> listeners = new CopyOnWriteArrayList<>();
+    private final Object socketLock = new Object();
+    
+    PhantomRunnerWebSocket() {
+    }
+    
+    @Override
+    public void onOpen(Connection connection) {
+        this.connection.set(connection);
+        
+        synchronized (socketLock) {
+            socketLock.notifyAll();
+        }
+    }
 
-	@Override
-	public void onClose(int closeCode, String message) {
-		// nothing to do...
-	}
+    @Override
+    public void onClose(int closeCode, String message) {
+        // nothing to do...
+    }
 
-	@Override
-	public void onMessage(String data) {
-		try {
-			for (PhantomMessageListener listener : listeners) {
-				listener.message(new ObjectMapper().readTree(data));
-			}
-			listeners.clear();
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
+    @Override
+    public void onMessage(String data) {
+        try {
+            for (PhantomMessageListener listener : listeners) {
+                listener.message(new ObjectMapper().readTree(data));
+            }
+            listeners.clear();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-	public void send(String msg, PhantomMessageListener responseListener) throws IOException {
-		try {
-			listeners.add(responseListener);
-			synchronized (socketLock) {
-				if (connection.get() == null) {
-					socketLock.wait(1000);
-				}
-			}
-			connection.get().sendMessage(msg);
-		} catch (InterruptedException ie) {
-			throw new RuntimeException(ie);
-		}
-	}
+    public void send(String msg, PhantomMessageListener responseListener) throws IOException {
+        try {
+            listeners.add(responseListener);
+            synchronized (socketLock) {
+                if (connection.get() == null) {
+                    socketLock.wait(1000);
+                }
+            }
+            connection.get().sendMessage(msg);
+        } catch (InterruptedException ie) {
+            throw new RuntimeException(ie);
+        }
+    }
 
-	public boolean isOpen() {
-		return connection.get().isOpen();
-	}
+    public boolean isOpen() {
+        return connection.get().isOpen();
+    }
 
-	public void close() {
-		connection.get().close();
-		connection.set(null);
-	}
+    public void close() {
+        connection.get().close();
+        connection.set(null);
+    }
 }

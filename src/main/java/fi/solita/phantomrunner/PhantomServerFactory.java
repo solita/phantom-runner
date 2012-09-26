@@ -7,23 +7,29 @@ import fi.solita.phantomrunner.testinterpreter.JavascriptTestInterpreter;
 
 public class PhantomServerFactory {
 
-    private final PhantomConfiguration config;
+    private final PhantomServerConfiguration config;
     private final JavascriptTestInterpreter interpreter;
     
     public PhantomServerFactory(PhantomConfiguration config, JavascriptTestInterpreter interpreter) {
-        this.config = config;
+        this.config = config.server();
         this.interpreter = interpreter;
     }
     
     public PhantomServer build() {
         try {
-            PhantomServerConfiguration serverConfig = config.server();
-            
-            Constructor<? extends PhantomServer> ctr = serverConfig.serverClass()
+            Constructor<? extends PhantomServer> ctr = config.serverClass()
                     .getConstructor(JavascriptTestInterpreter.class, PhantomServerConfiguration.class);
-            return ctr.newInstance(interpreter, serverConfig);
+            return ctr.newInstance(interpreter, config);
             
-        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+        } catch (NoSuchMethodException nsme) { 
+            throw new IllegalArgumentException(String.format(
+                    "Illegal server class of type %s provided, provided class must have a constructor of " +
+                    "signature %s(%s, %s)",
+                    config.serverClass(),
+                    config.serverClass(),
+                    JavascriptTestInterpreter.class,
+                    PhantomServerConfiguration.class));
+        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
     }

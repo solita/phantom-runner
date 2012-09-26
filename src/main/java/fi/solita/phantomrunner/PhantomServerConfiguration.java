@@ -13,5 +13,6 @@ public @interface PhantomServerConfiguration {
 
     Class<? extends PhantomServer> serverClass();
     String resourceBase() default "file://./src/main/resources";
+    int port() default 18080;
     
 }

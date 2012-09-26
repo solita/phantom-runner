@@ -14,7 +14,9 @@ import org.junit.runner.RunWith;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
 
+import fi.solita.phantomrunner.browserserver.PhantomJsServer;
 import fi.solita.phantomrunner.jasmine.JasmineTestInterpreter;
+import fi.solita.phantomrunner.jetty.PhantomJettyServer;
 
 public class JasminePhantomRunnerTest {
     
@@ -28,7 +30,11 @@ public class JasminePhantomRunnerTest {
             interpreter=@JavascriptTestInterpreterConfiguration(
                     interpreterClass=JasmineTestInterpreter.class,
                     libraryFilePaths="classpath:jasmine/jasmine.js"
-            ))
+            ),
+            server=@PhantomServerConfiguration(
+                    serverClass=PhantomJettyServer.class
+                )
+        )
     public static class JettyPhantomTestHolder {}
     
     @Test
@@ -47,7 +53,10 @@ public class JasminePhantomRunnerTest {
             interpreter=@JavascriptTestInterpreterConfiguration(
                     interpreterClass=JasmineTestInterpreter.class,
                     libraryFilePaths="classpath:jasmine/jasmine.js"
-            ))
+            ),
+            server=@PhantomServerConfiguration(
+                    serverClass=PhantomJsServer.class
+                ))
     public static class PhantomJsInternalServerTestHolder {}
     
     @Test

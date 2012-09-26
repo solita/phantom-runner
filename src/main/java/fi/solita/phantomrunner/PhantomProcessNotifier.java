@@ -6,8 +6,8 @@ import fi.solita.phantomrunner.testinterpreter.JavascriptTest;
 
 public interface PhantomProcessNotifier {
 
-	void initializeTestRun(String testFileData, String[] libPaths, String[] extLibs);
+    void initializeTestRun(String testFileData, String[] libPaths, String[] extLibs);
 
-	JsonNode runTest(JavascriptTest javascriptTest);
+    JsonNode runTest(JavascriptTest javascriptTest);
 
 }

@@ -8,16 +8,16 @@ import fi.solita.phantomrunner.jetty.PhantomWebSocketHandler;
 
 public interface JavascriptTestInterpreter {
 
-	List<JavascriptTest> listTestsFrom(String data);
+    List<JavascriptTest> listTestsFrom(String data);
 
-	String getTestHTML(String[] additionalLibraries, String testFilePath);
-	
-	String[] getLibPaths();
-	
-	String getRunnerPath();
+    String getTestHTML(String[] additionalLibraries, String testFilePath);
+    
+    String[] getLibPaths();
+    
+    String getRunnerPath();
 
-	boolean evaluateResult(JsonNode resultTree);
+    boolean evaluateResult(JsonNode resultTree);
 
-	PhantomWebSocketHandler getHandler();
+    PhantomWebSocketHandler getHandler();
 
 }

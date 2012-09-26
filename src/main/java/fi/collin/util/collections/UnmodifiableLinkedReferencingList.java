@@ -309,9 +309,9 @@ public class UnmodifiableLinkedReferencingList<E> implements List<E> {
         
         @Override
         public boolean hasNext() {
-        	if (subIterator == null) {
-        		return false;
-        	}
+            if (subIterator == null) {
+                return false;
+            }
             if (subIterator.hasNext()) {
                 return true;
             }

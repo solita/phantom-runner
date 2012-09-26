@@ -7,15 +7,15 @@ import fi.solita.phantomrunner.PhantomProcessNotifier;
 
 public interface JavascriptTest {
 
-	String getTestName();
+    String getTestName();
 
-	String getTestData();
-	
-	Description asDescription(Class<?> parentTestClass);
+    String getTestData();
+    
+    Description asDescription(Class<?> parentTestClass);
 
-	void run(RunNotifier notifier, PhantomProcessNotifier processNotifier);
+    void run(RunNotifier notifier, PhantomProcessNotifier processNotifier);
 
-	boolean isTest();
+    boolean isTest();
 
-	String getSuiteName();
+    String getSuiteName();
 }
