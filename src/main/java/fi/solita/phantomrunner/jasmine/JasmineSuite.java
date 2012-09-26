@@ -6,7 +6,7 @@ import java.util.List;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 
-import fi.solita.phantomrunner.PhantomProcess;
+import fi.solita.phantomrunner.PhantomProcessNotifier;
 import fi.solita.phantomrunner.testinterpreter.JavascriptTest;
 import fi.solita.phantomrunner.util.JavascriptBlockUtils;
 import fi.solita.phantomrunner.util.ObjectMemoizer;
@@ -48,10 +48,10 @@ public class JasmineSuite implements JavascriptTest {
 	}
 	
 	@Override
-	public void run(RunNotifier notifier, PhantomProcess process) {
+	public void run(RunNotifier notifier, PhantomProcessNotifier processNotifier) {
 		notifier.fireTestStarted(description.get());
 		for (JasmineSpec spec : specs) {
-			spec.run(notifier, process);
+			spec.run(notifier, processNotifier);
 		}
 		notifier.fireTestFinished(description.get());
 	}

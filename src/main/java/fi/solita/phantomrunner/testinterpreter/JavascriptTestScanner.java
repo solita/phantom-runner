@@ -25,7 +25,7 @@ public class JavascriptTestScanner {
 		try {
 			for (File f : scanForTests()) {
 				String data = FileUtils.fileRead(f, "UTF-8");
-				listener.fileScanned(data, interpreter.listTestsFrom(data));
+				listener.fileScanned("file://" + f.getAbsolutePath(), data, interpreter.listTestsFrom(data));
 			}
 		} catch (IOException e) {
 			throw new JavascriptInterpreterException("Error occured while reading Javascript test file", e);

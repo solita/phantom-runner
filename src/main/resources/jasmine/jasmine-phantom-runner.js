@@ -1,7 +1,7 @@
 (function() {
 	var server = require('webserver').create();
 	var system = require('system');
-
+	
 	var errorHandler = function(result) {
 		console.log("Error occured");
 		for (var key in result.error) {
@@ -13,9 +13,16 @@
 		}
 	};
 	
+	// websocket stuff
+	var ws = new WebSocket("ws://localhost:18080");
+	ws.onmessage = function(e) {
+		var data = JSON.parse(e.data);
+		parseHandler(data.type).handle(data);
+	};
+	
 	var page = null;
 	
-	var initHandler = function(request, response) {
+	var initHandler = function(data) {
 		// release previous page data from memory if any
 		if (page != null) {
 			page.release();
@@ -23,59 +30,34 @@
 		
 		page = require('webpage').create();
 		
-		var postData = JSON.parse(request.post); // content is JSON data
-		
-		for (var key in postData.libDatas) {
-			page.evaluate(function(libData) {
-				window.eval(libData);
-			}, postData.libDatas[key]);
-		}
-		
-		for (var key in postData.extLibs) {
-			page.evaluate(function(libData) {
-				window.eval(libData);
-			}, postData.extLibs[key]);
-		}
-		
 		page.onConsoleMessage = function (msg) { 
 			console.log(msg); 
 		};
 
-		var result = page.evaluate(function(testData) {	
-			try {
-				window.eval(testData);
-			} catch (e) {
-				return {error: e};
-			}
-		}, postData.testFileData);
+		// set the provided HTML as page content
+		page.content = data.testFileData;
 		
-		if (result && result.error) {
-			errorHandler(result);
-		}
-		
-		
-		response.statusCode = 200;
-		response.write("");
-		response.close();
+		ws.send(JSON.stringify({}));
 	};
 	
-	var runHandler = function(request, response) {
-		var resultJson = page.evaluate(function(request) {
-			var isSuiteRequest = function(post) {
-				return post.indexOf("#!#") == -1;
+	var runHandler = function(data) {
+		var resultJson = page.evaluate(function(data) {
+			var isSuiteRequest = function(testName) {
+				return testName.indexOf("#!#") == -1;
 			};
 			
-			var parseSuiteName = function(post) {
-				return post.split("#!#")[0];
+			var parseSuiteName = function(testName) {
+				return testName.split("#!#")[0];
 			};
 			
-			var parseTestName = function(post) {
-				return post.split("#!#")[1];
+			var parseTestName = function(testName) {
+				return testName.split("#!#")[1];
 			};
 			
-			var findSuite = function(post) {
-				var suiteName = parseSuiteName(post);
+			var findSuite = function(testName) {
+				var suiteName = parseSuiteName(testName);
 				var suites = jasmine.getEnv().currentRunner().suites();
+				
 				for (var i = 0; i < suites.length; i++) {
 					if (suites[i].description === suiteName) {
 						return suites[i];
@@ -95,35 +77,39 @@
 				throw "No test with name " + testName + " found, check your test initialization";
 			};
 			
-			if (isSuiteRequest(request.post)) {
-				findSuite(request.post).execute();
+			if (isSuiteRequest(data.testName)) {
+				findSuite(data.testName).execute();
 			} else {
-				findTest(request.post).execute();				
+				findTest(data.testName).execute();				
 			}
 			
 			var results = jasmine.getEnv().currentRunner().results();
+			
+			var failMessage = "";
+			if (!results.passed()) {
+			    failMessage = "Jasmine spec '" + parseTestName(data.testName) + "' in suite '" + parseSuiteName(data.testName) + "' failed";
+			}
 			
 			var jsonResult = {
 				passed: results.passed(),
 				totalCount: results.totalCount,
 				passedCount: results.passedCount,
-				failedCount: results.failedCount
+				failedCount: results.failedCount,
+				failMessage: failMessage
 			};
 			
 			return JSON.stringify(jsonResult);
-		}, request);
+		}, data);
 		
-		response.statusCode = 200;
-		response.write(resultJson);
-		response.close();
+		ws.send(resultJson);
 	};
 	
-	var parseHandler = function(url) {
+	var parseHandler = function(type) {
 		return {
 			handle: (function() {
-				if (url.indexOf("run") != -1) {
+				if (type.indexOf("run") != -1) {
 					return runHandler;
-				} else if (url.indexOf("init") != -1) { 
+				} else if (type.indexOf("init") != -1) { 
 					return initHandler;
 				} else {
 					throw "Unsupported operation";
@@ -131,15 +117,5 @@
 			})()
 		};
 	};
-
-	var service = server.listen(18080, function (request, response) {
-		try {
-			parseHandler(request.url).handle(request, response);
-		} catch (e) {
-			response.statusCode = 500;
-			response.write('<html><body><h1>Error</h1><p>' + e + '</p></body></html>');
-			console.error(e);
-			response.close();
-		}
-	});
+	
 }());

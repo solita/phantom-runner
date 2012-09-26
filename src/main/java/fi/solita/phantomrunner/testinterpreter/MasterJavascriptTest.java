@@ -1,20 +1,21 @@
 package fi.solita.phantomrunner.testinterpreter;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
+
 import fi.collin.util.collections.UnmodifiableLinkedReferencingList;
-import fi.solita.phantomrunner.PhantomProcess;
+import fi.solita.phantomrunner.PhantomProcessNotifier;
 
 public final class MasterJavascriptTest implements JavascriptTest {
 
 	private final Class<?> testClass;
-	private final Map<String, List<JavascriptTest>> tests;
+	private final List<JavascriptTestFile> testFiles;
 	private final JavascriptTestInterpreter interpreter;
 	private final String[] extLibs;
 	
@@ -27,30 +28,43 @@ public final class MasterJavascriptTest implements JavascriptTest {
 		
 		MasterJavascriptListener listener = new MasterJavascriptListener();
 		new JavascriptTestScanner(testClass, interpreter).parseTests(listener);
-		this.tests = listener.getTests();
+		this.testFiles = listener.getTests();
 	}
 	
 	@Override
 	public Description asDescription(Class<?> parentTestClass) {
 		if (cache == null) {
 			cache = Description.createSuiteDescription(testClass);
-			for (JavascriptTest test : new UnmodifiableLinkedReferencingList<>(tests.values())) {
+			
+			// oh how I wait thee lambda expressions...
+			Iterable<List<JavascriptTest>> testLists = Iterables.transform(testFiles, 
+			        new Function<JavascriptTestFile, List<JavascriptTest>>() {
+                @Override
+                public List<JavascriptTest> apply(JavascriptTestFile input) {
+                    return input.getTests();
+                }
+            });
+			
+			for (JavascriptTest test : new UnmodifiableLinkedReferencingList<>(testLists)) {
 				cache.addChild(test.asDescription(testClass));
 			}
 		}
 		return cache;
-	}
+	}  
 
 	@Override
-	public void run(RunNotifier notifier, PhantomProcess process) {
-		notifier.fireTestStarted(cache);
-		for (Entry<String, List<JavascriptTest>> testFile : tests.entrySet()) {
-			process.initializeTestRun(testFile.getKey(), interpreter.getLibPaths(), extLibs);
-			for (JavascriptTest test : testFile.getValue()) {
-				test.run(notifier, process);
+	public void run(RunNotifier notifier, PhantomProcessNotifier processNotifier) {
+		for (JavascriptTestFile testFile : testFiles) {
+			
+		    processNotifier.initializeTestRun(
+			        interpreter.getTestHTML(extLibs, testFile.getFilePath()), 
+			        interpreter.getLibPaths(), 
+			        extLibs);
+		    
+			for (JavascriptTest test : testFile.getTests()) {
+				test.run(notifier, processNotifier);
 			}
 		}
-		notifier.fireTestFinished(cache);
 	}
 
 	@Override
@@ -76,15 +90,15 @@ public final class MasterJavascriptTest implements JavascriptTest {
 	
 	private static class MasterJavascriptListener implements TestScannerListener {
 		
-		private final Map<String, List<JavascriptTest>> tests = new HashMap<>();
+		private final List<JavascriptTestFile> testFiles = new ArrayList<>();
 		
 		@Override
-		public void fileScanned(String data, List<JavascriptTest> testsFromData) {
-			this.tests.put(data, testsFromData);
+		public void fileScanned(String filePath, String fileData, List<JavascriptTest> testsFromData) {
+			this.testFiles.add(new JavascriptTestFile(filePath, fileData, testsFromData));
 		}
 		
-		public Map<String, List<JavascriptTest>> getTests() {
-			return tests;
+		public List<JavascriptTestFile> getTests() {
+			return testFiles;
 		}
 	}
 

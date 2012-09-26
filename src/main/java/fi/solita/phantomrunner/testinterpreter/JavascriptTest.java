@@ -3,7 +3,7 @@ package fi.solita.phantomrunner.testinterpreter;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 
-import fi.solita.phantomrunner.PhantomProcess;
+import fi.solita.phantomrunner.PhantomProcessNotifier;
 
 public interface JavascriptTest {
 
@@ -13,7 +13,7 @@ public interface JavascriptTest {
 	
 	Description asDescription(Class<?> parentTestClass);
 
-	void run(RunNotifier notifier, PhantomProcess process);
+	void run(RunNotifier notifier, PhantomProcessNotifier processNotifier);
 
 	boolean isTest();
 

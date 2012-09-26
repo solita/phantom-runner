@@ -6,6 +6,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import fi.solita.phantomrunner.jetty.PhantomJettyServer;
+
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Inherited
@@ -52,4 +54,10 @@ public @interface PhantomConfiguration {
 	 * Interpreter type to be used when running the tests.
 	 */
 	JavascriptTestInterpreterConfiguration interpreter();
+
+	
+	PhantomServerConfiguration server() default 
+	    @PhantomServerConfiguration(
+            serverClass=PhantomJettyServer.class
+        );
 }

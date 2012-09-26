@@ -7,7 +7,6 @@ import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.Suite;
-import org.junit.runners.model.InitializationError;
 
 import fi.solita.phantomrunner.testinterpreter.JavascriptInterpreterException;
 import fi.solita.phantomrunner.testinterpreter.JavascriptTestInterpreter;
@@ -16,17 +15,24 @@ import fi.solita.phantomrunner.util.ClassUtils;
 
 public class PhantomRunner extends Suite {
 
-	private final MasterJavascriptTest master;
-	
 	private final PhantomProcess process;
+	private final PhantomServer server;
 	
-	public PhantomRunner(Class<?> klass) throws InitializationError {
+	private final MasterJavascriptTest master;
+	private final PhantomProcessNotifier processNotifier;
+	
+	public PhantomRunner(Class<?> klass) throws Exception {
 		// whoopee, no Collections.emptyList() or ImmutableList due to Java generics
 		super(klass, new LinkedList<Runner>());
-		
+			
 		JavascriptTestInterpreter interpreter = createInterpreter();
-		this.master = new MasterJavascriptTest(getTestClass().getJavaClass(), interpreter, findPhantomConfigAnnotation().injectLibs());
-		this.process = new PhantomProcess(findPhantomConfigAnnotation(), interpreter);
+		
+		PhantomConfiguration config = findPhantomConfigAnnotation();
+				
+		this.server = new PhantomServerFactory(config, interpreter).build().start();
+		this.processNotifier = this.server.createNotifier();
+		this.master = new MasterJavascriptTest(getTestClass().getJavaClass(), interpreter, config.injectLibs());
+		this.process = new PhantomProcess(config, interpreter);
 	}
 
 	@Override
@@ -36,7 +42,18 @@ public class PhantomRunner extends Suite {
 
 	@Override
 	public void run(RunNotifier notifier) {
-		master.run(notifier, process);
+	    // Maven doesn't necessarily call getDescription so we need to invoke it in here to ensure
+	    // all descriptions are cached properly
+	    getDescription();
+	    
+		master.run(notifier, processNotifier);
+		
+		try {
+			process.stop();
+			server.stop();
+		} catch (Exception e) {
+			// ignore since these exceptions are irrelevant
+		}
 	}
 		
 	private JavascriptTestInterpreter createInterpreter() {
