@@ -6,7 +6,7 @@ import java.util.List;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 
-import fi.solita.phantomrunner.jetty.PhantomProcessNotifier;
+import fi.solita.phantomrunner.PhantomProcessNotifier;
 import fi.solita.phantomrunner.testinterpreter.JavascriptTest;
 import fi.solita.phantomrunner.util.JavascriptBlockUtils;
 import fi.solita.phantomrunner.util.ObjectMemoizer;

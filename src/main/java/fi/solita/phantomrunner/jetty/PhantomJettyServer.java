@@ -6,22 +6,25 @@ import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 
+import fi.solita.phantomrunner.PhantomProcessNotifier;
+import fi.solita.phantomrunner.PhantomServer;
+import fi.solita.phantomrunner.PhantomServerConfiguration;
 import fi.solita.phantomrunner.testinterpreter.JavascriptTestInterpreter;
 
-public class PhantomJettyServer {
+public class PhantomJettyServer implements PhantomServer {
 
 	private static final Log log = LogFactory.getLog(PhantomJettyServer.class);
 	private final Server server;
 	private final PhantomWebSocketHandler interpreterHandler;
 	
-	public PhantomJettyServer(JavascriptTestInterpreter interpreter, String resourceBase) {
+	public PhantomJettyServer(JavascriptTestInterpreter interpreter, PhantomServerConfiguration serverConfig) {
 		// we don't want to see the Jetty logging, disable it
 		org.eclipse.jetty.util.log.Log.setLog(new DiscardingJettyLogger());
 		
 		this.server = new Server(18080);
 		
 		this.interpreterHandler = interpreter.getHandler();
-		this.interpreterHandler.setHandler(createResourceHandler(resourceBase));
+		this.interpreterHandler.setHandler(createResourceHandler(serverConfig.resourceBase()));
 		this.server.setHandler(interpreterHandler);
 		
 		Runtime.getRuntime().addShutdownHook(new Thread() {
@@ -38,28 +41,31 @@ public class PhantomJettyServer {
 			}
 		});
 	}
+
+	   @Override
+	    public PhantomServer start() throws Exception {
+	        server.start();
+	        return this;
+	    }
+	    
+	    @Override
+	    public PhantomServer stop() throws Exception {
+	        if (server.isRunning()) {
+	            server.stop();
+	        }
+	        return this;
+	    }
+	    
+	    @Override
+	    public PhantomProcessNotifier createNotifier() {
+	        return new WebsocketPhantomNotifier(interpreterHandler);
+	    }
 	
 	private Handler createResourceHandler(String resourceBase) {
 		ResourceHandler handler = new ResourceHandler();
 		handler.setDirectoriesListed(false);
 		handler.setResourceBase("file://" + resourceBase);
 		return handler;
-	}
-
-	public PhantomJettyServer start() throws Exception {
-		server.start();
-		return this;
-	}
-	
-	public PhantomJettyServer stop() throws Exception {
-		if (server.isRunning()) {
-			server.stop();
-		}
-		return this;
-	}
-	
-	public PhantomProcessNotifier createNotifier() {
-		return new PhantomProcessNotifier(interpreterHandler);
 	}
 
 }

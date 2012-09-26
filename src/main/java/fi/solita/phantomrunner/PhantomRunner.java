@@ -8,8 +8,6 @@ import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.Suite;
 
-import fi.solita.phantomrunner.jetty.PhantomJettyServer;
-import fi.solita.phantomrunner.jetty.PhantomProcessNotifier;
 import fi.solita.phantomrunner.testinterpreter.JavascriptInterpreterException;
 import fi.solita.phantomrunner.testinterpreter.JavascriptTestInterpreter;
 import fi.solita.phantomrunner.testinterpreter.MasterJavascriptTest;
@@ -18,7 +16,7 @@ import fi.solita.phantomrunner.util.ClassUtils;
 public class PhantomRunner extends Suite {
 
 	private final PhantomProcess process;
-	private final PhantomJettyServer server;
+	private final PhantomServer server;
 	
 	private final MasterJavascriptTest master;
 	private final PhantomProcessNotifier processNotifier;
@@ -31,7 +29,7 @@ public class PhantomRunner extends Suite {
 		
 		PhantomConfiguration config = findPhantomConfigAnnotation();
 				
-		this.server = new PhantomJettyServer(interpreter, config.resourceBase()).start();
+		this.server = new PhantomServerFactory(config, interpreter).build().start();
 		this.processNotifier = this.server.createNotifier();
 		this.master = new MasterJavascriptTest(getTestClass().getJavaClass(), interpreter, config.injectLibs());
 		this.process = new PhantomProcess(config, interpreter);

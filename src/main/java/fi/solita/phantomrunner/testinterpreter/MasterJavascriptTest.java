@@ -10,7 +10,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 
 import fi.collin.util.collections.UnmodifiableLinkedReferencingList;
-import fi.solita.phantomrunner.jetty.PhantomProcessNotifier;
+import fi.solita.phantomrunner.PhantomProcessNotifier;
 
 public final class MasterJavascriptTest implements JavascriptTest {
 

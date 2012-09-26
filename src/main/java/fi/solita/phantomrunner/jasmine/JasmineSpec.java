@@ -8,7 +8,7 @@ import org.junit.runner.notification.RunNotifier;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import fi.solita.phantomrunner.jetty.PhantomProcessNotifier;
+import fi.solita.phantomrunner.PhantomProcessNotifier;
 import fi.solita.phantomrunner.testinterpreter.JavascriptTest;
 import fi.solita.phantomrunner.util.ObjectMemoizer;
 import fi.solita.phantomrunner.util.ParametrizedFactory;
