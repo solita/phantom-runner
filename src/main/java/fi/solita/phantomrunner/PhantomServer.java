@@ -5,5 +5,6 @@ public interface PhantomServer {
     PhantomServer start() throws Exception;
     PhantomServer stop() throws Exception;
     PhantomProcessNotifier createNotifier();
+    String getServerScriptPath();
     
 }

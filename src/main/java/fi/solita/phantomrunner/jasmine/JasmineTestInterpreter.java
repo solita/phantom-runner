@@ -1,45 +1,47 @@
 package fi.solita.phantomrunner.jasmine;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.codehaus.plexus.util.IOUtil;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Entities.EscapeMode;
 import org.springframework.core.io.DefaultResourceLoader;
-import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.io.Files;
 
-import fi.solita.phantomrunner.jetty.PhantomWebSocketHandler;
 import fi.solita.phantomrunner.testinterpreter.AbstractJavascriptTestInterpreter;
 import fi.solita.phantomrunner.testinterpreter.JavascriptTest;
+import fi.solita.phantomrunner.util.FileUtils;
 import fi.solita.phantomrunner.util.JavascriptBlockUtils;
 import fi.solita.phantomrunner.util.Strings;
 
 public class JasmineTestInterpreter extends AbstractJavascriptTestInterpreter {
 
-    private final PhantomWebSocketHandler handler;
+    private static final String JASMINE_PATH_PREFIX = "test-fw/jasmine/";
+    
     private final ResourceLoader resLoader = new DefaultResourceLoader();
     private final File runnerFile;
 
     public JasmineTestInterpreter(Class<?> testClass) {
-        this(new String[] { "classpath:test-fw/jasmine/jasmine.js" }, testClass);
+        this(new String[] {}, testClass);
     }
 
     public JasmineTestInterpreter(String[] libPaths, Class<?> testClass) {
         super(libPaths, testClass);
 
-        handler = new PhantomWebSocketHandler();
-        
-        this.runnerFile = extractRunnerIntoTempDirectory();
+        try {
+            this.runnerFile = FileUtils.extractResourceToTempDirectory(
+                    resLoader.getResource("classpath:" + JASMINE_PATH_PREFIX + "jasmine-phantom-runner.js"), 
+                    JASMINE_PATH_PREFIX, 
+                    true);
+        } catch (IOException ioe) {
+            throw new RuntimeException(ioe);
+        }
     }
 
     @Override
@@ -48,15 +50,10 @@ public class JasmineTestInterpreter extends AbstractJavascriptTestInterpreter {
     }
 
     @Override
-    public PhantomWebSocketHandler getHandler() {
-        return handler;
-    }
-
-    @Override
     public String getTestHTML(String[] additionalLibraries, String testDataUrl) {
         try {
             InputStream baseHtml = resLoader.getResource(
-                    "jasmine/jasmine-test-runner.html").getInputStream();
+                    JASMINE_PATH_PREFIX + "jasmine-test-runner.html").getInputStream();
             Document doc = Jsoup.parse(baseHtml, null, "");
             doc.outputSettings().escapeMode(EscapeMode.none);
 
@@ -113,32 +110,4 @@ public class JasmineTestInterpreter extends AbstractJavascriptTestInterpreter {
                 .text(Strings.streamToString(resLoader.getResource(libPath).getInputStream()));
     }
     
-    /**
-     * This extraction is done because runner file is inside a jar package and thus it is impossible to
-     * reference from PhantomJS. We cannot also pass it's content for PhantomJS since PhantomJS expects
-     * to get a file URI reference as an command line argument which it will use to command itself. Thus
-     * we'll extract the file into current user's temporary directory and reference it from there.
-     */
-    private File extractRunnerIntoTempDirectory() {
-        try {
-            final File tempDir = Files.createTempDir();
-            tempDir.deleteOnExit();
-            
-            final File jasmineDir = new File(tempDir, "jasmine");
-            jasmineDir.mkdir();
-            jasmineDir.deleteOnExit();
-            
-            final File runnerFile = new File(jasmineDir, "jasmine-phantom-runner.js");
-            runnerFile.createNewFile();
-            runnerFile.deleteOnExit();
-            
-            Resource res = resLoader.getResource("jasmine/jasmine-phantom-runner.js");
-
-            IOUtil.copy(res.getInputStream(), new FileWriter(runnerFile), "UTF-8");
-            
-            return runnerFile;
-        } catch (IOException ioe) {
-            throw new RuntimeException(ioe);
-        }
-    }
 }

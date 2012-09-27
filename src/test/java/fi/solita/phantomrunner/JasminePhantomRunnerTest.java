@@ -29,7 +29,7 @@ public class JasminePhantomRunnerTest {
             tests="**/jasmine/*-test.js",
             interpreter=@JavascriptTestInterpreterConfiguration(
                     interpreterClass=JasmineTestInterpreter.class,
-                    libraryFilePaths="classpath:jasmine/jasmine.js"
+                    libraryFilePaths="classpath:test-fw/jasmine/jasmine.js"
             ),
             server=@PhantomServerConfiguration(
                     serverClass=PhantomJettyServer.class
@@ -52,7 +52,7 @@ public class JasminePhantomRunnerTest {
             tests="**/jasmine/*-test.js",
             interpreter=@JavascriptTestInterpreterConfiguration(
                     interpreterClass=JasmineTestInterpreter.class,
-                    libraryFilePaths="classpath:jasmine/jasmine.js"
+                    libraryFilePaths="classpath:test-fw/jasmine/jasmine.js"
             ),
             server=@PhantomServerConfiguration(
                     serverClass=PhantomJsServer.class

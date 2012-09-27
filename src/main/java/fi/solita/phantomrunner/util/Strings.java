@@ -4,11 +4,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.codehaus.plexus.util.IOUtil;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableList.Builder;
 
 public class Strings {
 
@@ -50,5 +54,16 @@ public class Strings {
         StringWriter writer = new StringWriter();
         IOUtil.copy(stream, writer, "UTF-8");
         return writer.toString();
+    }
+    
+    public static List<String> stringList(String...str) {
+        return Arrays.asList(str);
+    }
+
+    public static List<String> stringList(String str, String... strs) {
+        Builder<String> builder = ImmutableList.builder();
+        builder.add(str);
+        builder.add(strs);
+        return builder.build();
     }
 }

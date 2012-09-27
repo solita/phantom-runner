@@ -1,47 +1,9 @@
-(function() {
-    var server = require('webserver').create();
-    var system = require('system');
+(function() {    
+    var log = require(phantomrunner.modules.utils).logger("JasminePhantomRunner");
     
-    var errorHandler = function(result) {
-        console.log("Error occured");
-        for (var key in result.error) {
-            if (typeof(result.error[key]) == 'object') {
-                
-            } else {
-                console.log(key + ":", result.error[key]);
-            }
-        }
-    };
-    
-    // websocket stuff
-    var ws = new WebSocket("ws://localhost:18080");
-    ws.onmessage = function(e) {
-        var data = JSON.parse(e.data);
-        parseHandler(data.type).handle(data);
-    };
-    
-    var page = null;
-    
-    var initHandler = function(data) {
-        // release previous page data from memory if any
-        if (page != null) {
-            page.release();
-        }
+    var runHandler = function(data, page) {
         
-        page = require('webpage').create();
-        
-        page.onConsoleMessage = function (msg) { 
-            console.log(msg); 
-        };
-
-        // set the provided HTML as page content
-        page.content = data.testFileData;
-        
-        ws.send(JSON.stringify({}));
-    };
-    
-    var runHandler = function(data) {
-        var resultJson = page.evaluate(function(data) {
+        return page.evaluate(function(data) {
             var isSuiteRequest = function(testName) {
                 return testName.indexOf("#!#") == -1;
             };
@@ -100,22 +62,8 @@
             
             return JSON.stringify(jsonResult);
         }, data);
-        
-        ws.send(resultJson);
     };
     
-    var parseHandler = function(type) {
-        return {
-            handle: (function() {
-                if (type.indexOf("run") != -1) {
-                    return runHandler;
-                } else if (type.indexOf("init") != -1) { 
-                    return initHandler;
-                } else {
-                    throw "Unsupported operation";
-                }
-            })()
-        };
-    };
+    phantomrunner.modules.PhantomServer.initRunner(runHandler, log);
     
 }());

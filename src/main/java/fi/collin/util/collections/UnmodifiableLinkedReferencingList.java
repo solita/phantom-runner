@@ -37,6 +37,9 @@ import com.google.common.collect.Iterables;
  * generally performs better than using a for loop with growing indicies and {@link List#get(int)}.
  * This speed difference increases with the amount of sublists, with only one sublist the performance
  * is practically identical to the sublist implementation.</p>
+ * 
+ * <p><b>Originally from: <a href="http://blogs.collin.fi/npe/entry/unmodifiablelinkedreferencinglist">
+ * http://blogs.collin.fi/npe/entry/unmodifiablelinkedreferencinglist</a></b></p>
  *
  * @author Niklas Collin
  */
