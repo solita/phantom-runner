@@ -13,14 +13,10 @@ import fi.solita.phantomrunner.util.FileUtils;
 
 public class PhantomJsServer implements PhantomServer {
 
-    private final JavascriptTestInterpreter interpreter;
-    private final PhantomServerConfiguration config;
     private final File serverScriptFile;
 
     public PhantomJsServer(JavascriptTestInterpreter interpreter, PhantomServerConfiguration serverConfig) {
-        this.interpreter = interpreter;
-        this.config = serverConfig;
-        
+        // TODO: how can we send the server port for PhantomJS from here?
         try {
             this.serverScriptFile = FileUtils.extractResourceToTempDirectory(
                     new DefaultResourceLoader().getResource("classpath:phantomjs-server/phantomjs-server.js"), 
