@@ -38,6 +38,7 @@ import fi.solita.phantomrunner.testinterpreter.JavascriptTest;
 
 public class HttpPhantomJsServerNotifier implements PhantomProcessNotifier {
 
+    private final HttpClient client = new HttpClient();
     private final ObjectMapper mapper = new ObjectMapper();
     
     @Override
@@ -66,8 +67,6 @@ public class HttpPhantomJsServerNotifier implements PhantomProcessNotifier {
 
     private JsonNode send(Map<String, Object> jsonMap) {
         try {
-            HttpClient client = new HttpClient();
-            
             // FIXME: should relly get this port from the JUnit configs but have no real way to pass this
             //        to JavaScript side of things yet, bummer
             PostMethod method = new PostMethod("http://localhost:18080");
