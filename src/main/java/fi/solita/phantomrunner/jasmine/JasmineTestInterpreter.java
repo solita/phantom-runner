@@ -28,7 +28,7 @@ public class JasmineTestInterpreter extends AbstractJavascriptTestInterpreter {
     private final File runnerFile;
 
     public JasmineTestInterpreter(Class<?> testClass) {
-        this(new String[] {}, testClass);
+        this(new String[] {"classpath:" + JASMINE_PATH_PREFIX + "jasmine.js"}, testClass);
     }
 
     public JasmineTestInterpreter(String[] libPaths, Class<?> testClass) {
