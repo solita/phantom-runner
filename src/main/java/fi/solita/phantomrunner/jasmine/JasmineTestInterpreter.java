@@ -26,9 +26,18 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Entities.EscapeMode;
+import org.htmlparser.Node;
+import org.htmlparser.Parser;
+import org.htmlparser.Tag;
+import org.htmlparser.lexer.Lexer;
+import org.htmlparser.lexer.Page;
+import org.htmlparser.nodes.TextNode;
+import org.htmlparser.tags.HeadTag;
+import org.htmlparser.tags.Html;
+import org.htmlparser.tags.ScriptTag;
+import org.htmlparser.util.NodeList;
+import org.htmlparser.util.ParserException;
+import org.htmlparser.util.SimpleNodeIterator;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.ResourceLoader;
 
@@ -74,28 +83,44 @@ public class JasmineTestInterpreter extends AbstractJavascriptTestInterpreter {
         try {
             InputStream baseHtml = resLoader.getResource(
                     JASMINE_PATH_PREFIX + "jasmine-test-runner.html").getInputStream();
-            Document doc = Jsoup.parse(baseHtml, null, "");
-            doc.outputSettings().escapeMode(EscapeMode.none);
-
+            
+            NodeList html = new Parser(new Lexer(new Page(baseHtml, "UTF-8"))).parse(null);
+            NodeList head = findHeadContent(html);
+            
             // Interpreter libraries usually come from inside a jar-package and thus they cannot be 
             // referenced via file system URI. Because of this we'll inject the scripts themselves 
             // directly to the HTML.
             for (String lib : getLibPaths()) {
-                injectScript(doc, lib);
+                injectScript(head, lib);
             }
 
             for (String lib : additionalLibraries) {
-                appendScript(doc, lib);
+                appendScript(head, lib);
             }
 
-            appendScript(doc, testDataUrl);
+            appendScript(head, testDataUrl);
 
-            return doc.html();
-        } catch (IOException ioe) {
+            return html.toHtml();
+        } catch (IOException | ParserException ioe) {
             throw new RuntimeException(ioe);
         }
     }
 
+    private NodeList findHeadContent(NodeList html) {
+        return findChildren(findChildren(html, Html.class), HeadTag.class);
+    }
+
+    private NodeList findChildren(NodeList nodes, Class<? extends Tag> tagClass) {
+        SimpleNodeIterator iter = nodes.elements();
+        while (iter.hasMoreNodes()) {
+            Node n = iter.nextNode();
+            if (n.getClass().equals(tagClass)) {
+                return n.getChildren();
+            }
+        }
+        throw new IllegalArgumentException(String.format("No tag %s found", tagClass));
+    }
+    
     @Override
     protected List<JavascriptTest> createTestsFrom(String data,
             Class<?> testClass) {
@@ -116,18 +141,23 @@ public class JasmineTestInterpreter extends AbstractJavascriptTestInterpreter {
         return resultTree.get("passed").asBoolean();
     }
 
-    private void appendScript(Document doc, String libPath) throws IOException {
-        doc.head()
-            .appendElement("script")
-                .attr("type", "text/javascript")
-                .attr("src", resLoader.getResource(libPath).getFile().getAbsolutePath());
+    private void appendScript(NodeList head, String libPath) throws IOException {
+        // really, how bad a HTML parsing library can be? Unfortunately JSOUP is even worse when it comes
+        // to dynamically adding JavaScript content due to it enforces stripping end of line characters away
+        ScriptTag script = new ScriptTag();
+        script.setAttribute("type", "text/javascript");
+        script.setAttribute("src", resLoader.getResource(libPath).getFile().getAbsolutePath());
+        head.add(script);
+        // really? ONLY way to close the script tag without xml ending?
+        head.add(new TextNode("</SCRIPT>\n"));
     }
 
-    private void injectScript(Document doc, String libPath) throws IOException {
-        doc.head()
-            .appendElement("script")
-                .attr("type", "text/javascript")
-                .text(Strings.streamToString(resLoader.getResource(libPath).getInputStream()));
+    private void injectScript(NodeList head, String libPath) throws IOException {
+        ScriptTag script = new ScriptTag();
+        script.setAttribute("type", "text/javascript");
+        script.setScriptCode(Strings.streamToString(resLoader.getResource(libPath).getInputStream()));
+        head.add(script);
+        head.add(new TextNode("</SCRIPT>\n"));
     }
     
 }

@@ -27,6 +27,8 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 
+import junit.framework.AssertionFailedError;
+
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
@@ -98,7 +100,7 @@ public class JasminePhantomRunnerTest {
             public void testFailure(Failure failure) throws Exception {
                 String header = failure.getTestHeader();
                 failedTestNames.add(header.substring(0, header.indexOf('(')));
-            } 
+            }
         });
         
         Result result = core.run(testClass);
