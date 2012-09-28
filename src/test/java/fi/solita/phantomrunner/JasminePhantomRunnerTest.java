@@ -27,8 +27,6 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.AssertionFailedError;
-
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
