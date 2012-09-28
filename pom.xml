@@ -8,6 +8,28 @@
     
     <name>PhantomRunner</name>
     <description>Javascript test integration with JUnit and PhantomJS headless browser</description>
+    
+    <licenses>
+        <license>
+            <name>The MIT License (MIT)</name>
+            <distribution>repo</distribution>
+            <url>http://opensource.org/licenses/mit-license.php</url>
+        </license>
+    </licenses>
+    
+    <organization>
+        <name>Solita Oy</name>
+        <url>http://www.solita.fi</url>
+    </organization>
+    
+    <developers>
+        <developer>
+            <name>Niklas Collin</name>
+            <organization>Solita Oy</organization>
+            <organizationUrl>http://www.solita.fi</organizationUrl>
+            <timezone>2</timezone>
+        </developer>
+    </developers>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
