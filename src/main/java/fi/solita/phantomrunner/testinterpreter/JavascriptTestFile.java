@@ -22,6 +22,9 @@ package fi.solita.phantomrunner.testinterpreter;
 
 import java.util.List;
 
+/**
+ * An abstraction representing a single JavaScript file containing tests.
+ */
 public class JavascriptTestFile {
 
     private final String filePath;

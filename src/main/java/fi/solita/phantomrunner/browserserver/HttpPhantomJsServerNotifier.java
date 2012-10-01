@@ -36,13 +36,17 @@ import com.google.common.collect.ImmutableMap;
 import fi.solita.phantomrunner.PhantomProcessNotifier;
 import fi.solita.phantomrunner.testinterpreter.JavascriptTest;
 
+/**
+ * {@link PhantomProcessNotifier} implementation which calls external HTTP server (PhantomJs web server) with
+ * regular HTTP POST requests.
+ */
 public class HttpPhantomJsServerNotifier implements PhantomProcessNotifier {
 
     private final HttpClient client = new HttpClient();
     private final ObjectMapper mapper = new ObjectMapper();
     
     @Override
-    public void initializeTestRun(String testFileData, String[] libPaths, String[] extLibs) {
+    public void initializeTestRun(String testFileData) {
         ImmutableMap.Builder<String, Object> json = ImmutableMap.builder();
         
         send(json

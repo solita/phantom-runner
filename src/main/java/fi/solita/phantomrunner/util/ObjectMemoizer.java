@@ -22,6 +22,9 @@ package fi.solita.phantomrunner.util;
 
 import java.util.concurrent.atomic.AtomicReference;
 
+/**
+ * Simple utility class vaguely mimicking functional world memoize -function.
+ */
 public class ObjectMemoizer<T, P> {
 
     private final ParametrizedFactory<T, P> factory;

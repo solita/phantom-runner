@@ -31,7 +31,13 @@ import com.google.common.collect.Iterables;
 
 import fi.collin.util.collections.UnmodifiableLinkedReferencingList;
 import fi.solita.phantomrunner.PhantomProcessNotifier;
+import fi.solita.phantomrunner.PhantomRunner;
 
+/**
+ * The core master test implementation. This is the "root" test created by {@link PhantomRunner} and it
+ * handles all the child {@link JavascriptTest} object evaluations etc. MasterJavascriptTest is common for
+ * all {@link JavascriptTestInterpreter} implementations and thus it is test framework independent.
+ */
 public final class MasterJavascriptTest implements JavascriptTest {
 
     private final Class<?> testClass;
@@ -76,10 +82,7 @@ public final class MasterJavascriptTest implements JavascriptTest {
     public void run(RunNotifier notifier, PhantomProcessNotifier processNotifier) {
         for (JavascriptTestFile testFile : testFiles) {
             
-            processNotifier.initializeTestRun(
-                    interpreter.getTestHTML(extLibs, testFile.getFilePath()), 
-                    interpreter.getLibPaths(), 
-                    extLibs);
+            processNotifier.initializeTestRun(interpreter.getTestHTML(extLibs, testFile.getFilePath()));
             
             for (JavascriptTest test : testFile.getTests()) {
                 test.run(notifier, processNotifier);

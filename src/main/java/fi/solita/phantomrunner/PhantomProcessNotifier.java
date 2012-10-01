@@ -24,10 +24,30 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import fi.solita.phantomrunner.testinterpreter.JavascriptTest;
 
+/**
+ * <p>Notifier which informs the PhantomJs process of two things:</p>
+ * 
+ * <ul>
+ *   <li>Test file is about to be executed (an HTML file containing the test script)</li>
+ *   <li>A test described in the above test file is about to be executed</li>
+ * </ul>
+ */
 public interface PhantomProcessNotifier {
 
-    void initializeTestRun(String testFileData, String[] libPaths, String[] extLibs);
+    /**
+     * Initializes a JavaScript test file in the PhantomJs for execution. Always call this before
+     * calling {@link #runTest(JavascriptTest)} to ensure PhantomJs is aware of the tests.
+     * 
+     * @param testFileData An HTML file containing the actual test data as inline script
+     */
+    void initializeTestRun(String testFileData);
 
+    /**
+     * Executes the given test at PhantomJs.
+     * 
+     * @param javascriptTest
+     * @return JsonNode containing the result JSON generated at JavaScript code
+     */
     JsonNode runTest(JavascriptTest javascriptTest);
 
 }

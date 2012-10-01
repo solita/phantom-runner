@@ -22,6 +22,9 @@ package fi.solita.phantomrunner.jetty;
 
 import org.eclipse.jetty.util.log.Logger;
 
+/**
+ * A Jetty logger which does exactly nothing. Can be used to silence Jetty logger completely.
+ */
 public class DiscardingJettyLogger implements Logger {
 
     @Override

@@ -24,16 +24,48 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import fi.solita.phantomrunner.PhantomRunner;
+
+/**
+ * JavaScript test framework integration interface. All supported test frameworks must implement this
+ * interface to provide proper integration with {@link PhantomRunner}.
+ */
 public interface JavascriptTestInterpreter {
 
+    /**
+     * Provides a test file data as String to the interpreter for parsing. This is the main entry point
+     * for parsing the tests and the returned tests should be interpreter specific implementations.
+     */
     List<JavascriptTest> listTestsFrom(String data);
 
-    String getTestHTML(String[] additionalLibraries, String testFilePath);
+    /**
+     * Returns a HTML file which will be used as the "test runner" for this interpreter.
+     * 
+     * @param additionalJsFilePaths An array of resource paths which should be added to the page 
+     * before the test file
+     * @param testFilePath A resource path to the JavaScript test file to be embedded to the test runner page
+     */
+    String getTestHTML(String[] additionalJsFilePaths, String testFilePath);
     
+    
+    /**
+     * Returns a resource path array for all JavaScript library files needed for by the JavaScript test
+     * framework this interpreter represents.
+     */
     String[] getLibPaths();
     
+    /**
+     * Returns the path to the JavaScript runner file for this interpreter. This runner file is the real
+     * glue between PhantomJS and the testing framework. It should call the testing framework API and do
+     * the dirty work needed for the actual tests to run. It is also responsible of actually evaluating the
+     * data from the tests etc.
+     */
     String getRunnerPath();
 
+    /**
+     * Evaluate the given JSON result data received from the JavaScript runner. Did the executed test pass or
+     * not?
+     */
     boolean evaluateResult(JsonNode resultTree);
 
 }

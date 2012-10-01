@@ -26,13 +26,30 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Configures the {@link PhantomServer} type to be used in the {@link PhantomProcess} and PhantomJs
+ * communication.
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Inherited
 public @interface PhantomServerConfiguration {
 
+    /**
+     * Server class type to be used
+     */
     Class<? extends PhantomServer> serverClass();
+    
+    /**
+     * Defines the root of the resources to be served if PhantomJs process requests them. This allows
+     * querying for example http://localhost:18080/js/foo.js in the tests. When defining the base please
+     * provide a proper protocol prefix with it. Default value is file://./src/main/resources
+     */
     String resourceBase() default "file://./src/main/resources";
+    
+    /**
+     * TCP port the server should listen. Default is 18080.
+     */
     int port() default 18080;
     
 }

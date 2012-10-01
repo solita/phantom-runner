@@ -28,9 +28,20 @@ import org.springframework.core.io.DefaultResourceLoader;
 import fi.solita.phantomrunner.PhantomProcessNotifier;
 import fi.solita.phantomrunner.PhantomServer;
 import fi.solita.phantomrunner.PhantomServerConfiguration;
+import fi.solita.phantomrunner.jetty.PhantomJettyServer;
 import fi.solita.phantomrunner.testinterpreter.JavascriptTestInterpreter;
 import fi.solita.phantomrunner.util.FileUtils;
 
+/**
+ * Implementation of {@link PhantomServer} which uses the internal PhantomJs web server. So in essence this
+ * class isn't actually the server but more of a fake which handles communication to PhantomJs process via
+ * HTTP requests directed to the PhantomJs web server. This limits the functionality of 
+ * {@link PhantomJsServer} somewhat: server port cannot be configured and for obvious reasons it cannot
+ * provide any resource files. Use {@link PhantomJsServer} for small test suites since it starts fast.
+ * PhantomJs web server isn't exactly super fast though and HTTP request overhead slows things down when the
+ * test suite gets bigger. If this is the case then consider using a full server implementation such as the
+ * {@link PhantomJettyServer}.
+ */
 public class PhantomJsServer implements PhantomServer {
 
     private final File serverScriptFile;

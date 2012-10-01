@@ -30,6 +30,9 @@ import com.google.common.collect.ImmutableMap;
 import fi.solita.phantomrunner.PhantomProcessNotifier;
 import fi.solita.phantomrunner.testinterpreter.JavascriptTest;
 
+/**
+ * Notifier implementation which sends messages to PhantomJS via websocket.
+ */
 public class WebsocketPhantomNotifier implements PhantomProcessNotifier {
     
     private final ObjectMapper mapper = new ObjectMapper();
@@ -39,7 +42,8 @@ public class WebsocketPhantomNotifier implements PhantomProcessNotifier {
         this.handler = interpreterHandler;
     }
 
-    public void initializeTestRun(String testFileData, String[] libPaths, String[] extLibs) {
+    @Override
+    public void initializeTestRun(String testFileData) {
         ImmutableMap.Builder<String, Object> json = ImmutableMap.builder();
         
         send(json
@@ -48,6 +52,7 @@ public class WebsocketPhantomNotifier implements PhantomProcessNotifier {
             .build());
     }
 
+    @Override
     public JsonNode runTest(JavascriptTest javascriptTest) {
         ImmutableMap.Builder<String, Object> json = ImmutableMap.builder();
         

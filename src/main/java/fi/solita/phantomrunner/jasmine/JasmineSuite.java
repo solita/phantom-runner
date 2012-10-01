@@ -33,6 +33,10 @@ import fi.solita.phantomrunner.util.ObjectMemoizer;
 import fi.solita.phantomrunner.util.ParametrizedFactory;
 import fi.solita.phantomrunner.util.Strings;
 
+/**
+ * Class representing Jasmine's test suite described with function 'describe'
+ *
+ */
 public class JasmineSuite implements JavascriptTest {
 
     private final String name;

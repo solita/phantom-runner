@@ -31,6 +31,9 @@ import org.codehaus.plexus.util.FileUtils;
 import fi.solita.phantomrunner.PhantomConfiguration;
 import fi.solita.phantomrunner.util.ClassUtils;
 
+/**
+ * Scanner for JavaScript test files.
+ */
 public class JavascriptTestScanner {
 
     private final Class<?> testClass;

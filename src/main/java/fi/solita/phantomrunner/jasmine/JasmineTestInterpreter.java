@@ -47,10 +47,15 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import fi.solita.phantomrunner.testinterpreter.AbstractJavascriptTestInterpreter;
 import fi.solita.phantomrunner.testinterpreter.JavascriptTest;
+import fi.solita.phantomrunner.testinterpreter.JavascriptTestInterpreter;
 import fi.solita.phantomrunner.util.FileUtils;
 import fi.solita.phantomrunner.util.JavascriptBlockUtils;
 import fi.solita.phantomrunner.util.Strings;
 
+/**
+ * {@link JavascriptTestInterpreter} implementation for <a href="http://pivotal.github.com/jasmine/">Jasmine
+ * BDD framework</a>.
+ */
 public class JasmineTestInterpreter extends AbstractJavascriptTestInterpreter {
 
     private static final String JASMINE_PATH_PREFIX = "test-fw/jasmine/";
@@ -110,29 +115,17 @@ public class JasmineTestInterpreter extends AbstractJavascriptTestInterpreter {
             throw new RuntimeException(ioe);
         }
     }
-
-    private NodeList findHeadContent(NodeList html) {
-        return findChildren(findChildren(html, Html.class), HeadTag.class);
-    }
-
-    private NodeList findChildren(NodeList nodes, Class<? extends Tag> tagClass) {
-        SimpleNodeIterator iter = nodes.elements();
-        while (iter.hasMoreNodes()) {
-            Node n = iter.nextNode();
-            if (n.getClass().equals(tagClass)) {
-                return n.getChildren();
-            }
-        }
-        throw new IllegalArgumentException(String.format("No tag %s found", tagClass));
-    }
     
     @Override
-    protected List<JavascriptTest> createTestsFrom(String data,
-            Class<?> testClass) {
+    public boolean evaluateResult(JsonNode resultTree) {
+        return resultTree.get("passed").asBoolean();
+    }
+
+    @Override
+    protected List<JavascriptTest> createTestsFrom(String data, Class<?> testClass) {
         List<JavascriptTest> tests = new ArrayList<>();
 
-        for (String describe : JavascriptBlockUtils
-                .findBlocks(data, "describe")) {
+        for (String describe : JavascriptBlockUtils.findBlocks(data, "describe")) {
             if (!describe.isEmpty()) {
                 tests.add(new JasmineSuite(describe, testClass));
             }
@@ -140,12 +133,7 @@ public class JasmineTestInterpreter extends AbstractJavascriptTestInterpreter {
 
         return tests;
     }
-
-    @Override
-    public boolean evaluateResult(JsonNode resultTree) {
-        return resultTree.get("passed").asBoolean();
-    }
-
+    
     private void appendScript(NodeList head, String libPath) throws IOException {
         // really, how bad a HTML parsing library can be? Unfortunately JSOUP is even worse when it comes
         // to dynamically adding JavaScript content due to it enforces stripping end of line characters away
@@ -177,4 +165,18 @@ public class JasmineTestInterpreter extends AbstractJavascriptTestInterpreter {
         head.add(new TextNode("</SCRIPT>\n"));
     }
     
+    private NodeList findHeadContent(NodeList html) {
+        return findChildren(findChildren(html, Html.class), HeadTag.class);
+    }
+
+    private NodeList findChildren(NodeList nodes, Class<? extends Tag> tagClass) {
+        SimpleNodeIterator iter = nodes.elements();
+        while (iter.hasMoreNodes()) {
+            Node n = iter.nextNode();
+            if (n.getClass().equals(tagClass)) {
+                return n.getChildren();
+            }
+        }
+        throw new IllegalArgumentException(String.format("No tag %s found", tagClass));
+    }
 }

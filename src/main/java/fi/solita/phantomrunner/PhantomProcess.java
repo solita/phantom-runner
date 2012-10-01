@@ -28,6 +28,10 @@ import java.util.concurrent.Future;
 import fi.solita.phantomrunner.stream.StreamPiper;
 import fi.solita.phantomrunner.util.Strings;
 
+/**
+ * Class abstracting the PhantomJs process. Registers a shutdown hook for killing the process when JVM
+ * exits and provides a input stream piping to standard out.
+ */
 public class PhantomProcess {
 
     private final String path;

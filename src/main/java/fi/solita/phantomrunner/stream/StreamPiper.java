@@ -24,6 +24,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+/**
+ * Simple stream delegater, all data which is read from the provided InputStream is written to the given
+ * OutputStream. Can be ran in a separate thread for non-blocking background work.
+ */
 public class StreamPiper implements Runnable {
 
     private final InputStream in;

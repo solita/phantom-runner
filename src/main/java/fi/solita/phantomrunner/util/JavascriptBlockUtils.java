@@ -25,6 +25,14 @@ import java.util.List;
 
 public class JavascriptBlockUtils {
 
+    /**
+     * <p>Simple utility method for parsing a file for specific code blocks. It searches the file for keyword
+     * and then finds the ending brace for that specific code block. This is repeated for all found such
+     * blocks and the result is returned as a List.</p>
+     * 
+     * <p>Note, this is a poor man's version of a real proper AST. It has several problems and should be used
+     * with caution.</p> 
+     */
     public static List<String> findBlocks(String data, String keyword) {
         List<String> elements = new ArrayList<>();
         

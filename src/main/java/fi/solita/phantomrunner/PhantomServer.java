@@ -20,6 +20,10 @@
  */
 package fi.solita.phantomrunner;
 
+/**
+ * PhantomServer represents a server or it's look-a-like which is used in communication between
+ * {@link PhantomRunner} and PhantomJs.
+ */
 public interface PhantomServer {
 
     PhantomServer start() throws Exception;

@@ -22,6 +22,9 @@ package fi.solita.phantomrunner.jetty;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+/**
+ * Abstraction for websocket message passing
+ */
 public interface PhantomMessageListener {
 
     void message(JsonNode readTree);

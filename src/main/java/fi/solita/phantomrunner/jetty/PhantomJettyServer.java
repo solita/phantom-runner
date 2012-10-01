@@ -31,11 +31,17 @@ import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.springframework.core.io.DefaultResourceLoader;
 
 import fi.solita.phantomrunner.PhantomProcessNotifier;
+import fi.solita.phantomrunner.PhantomRunner;
 import fi.solita.phantomrunner.PhantomServer;
 import fi.solita.phantomrunner.PhantomServerConfiguration;
 import fi.solita.phantomrunner.testinterpreter.JavascriptTestInterpreter;
 import fi.solita.phantomrunner.util.FileUtils;
 
+/**
+ * Jetty based {@link PhantomServer} implementation. Uses websockets in communicating with PhantomJs process.
+ * Define the port Jetty should use in {@link PhantomServerConfiguration#port()} when configuring the
+ * {@link PhantomRunner}.
+ */
 public class PhantomJettyServer implements PhantomServer {
 
     private static final Log log = LogFactory.getLog(PhantomJettyServer.class);

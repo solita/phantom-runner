@@ -25,6 +25,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
 
 import org.junit.runner.Description;
+import org.junit.runner.RunWith;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.Suite;
@@ -37,6 +38,16 @@ import fi.solita.phantomrunner.testinterpreter.MasterJavascriptTest;
 import fi.solita.phantomrunner.util.ClassUtils;
 import fi.solita.phantomrunner.util.FileUtils;
 
+/**
+ * <p>Core class for Phantom Runner. {@link PhantomRunner} is a custom JUnit {@link Suite} which can be used with JUnit
+ * {@link RunWith} annotation to enable executing JavaScript tests in the <a href="http://phantomjs.org/">
+ * PhantomJs</a> headless browser.</p>
+ * 
+ * <p>To use {@link PhantomRunner} you must also add {@link PhantomConfiguration} annotation to your test
+ * class after the {@link RunWith} annotation. All of the configuration for the test execution should be
+ * set in the {@link PhantomConfiguration}. Please see it's documentation for further information.
+ *
+ */
 public class PhantomRunner extends Suite {
 
     private final PhantomProcess process;
@@ -55,7 +66,7 @@ public class PhantomRunner extends Suite {
                 
         this.server = new PhantomServerFactory(config, interpreter).build().start();
         this.processNotifier = this.server.createNotifier();
-        this.master = new MasterJavascriptTest(getTestClass().getJavaClass(), interpreter, config.injectLibs());
+        this.master = new MasterJavascriptTest(getTestClass().getJavaClass(), interpreter, config.injectJavascriptFiles());
         this.process = new PhantomProcess(config, 
                 phantomRunnerInitializerPath(),
                 server.getServerScriptPath(),

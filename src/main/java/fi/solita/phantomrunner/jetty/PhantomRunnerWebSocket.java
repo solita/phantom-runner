@@ -29,6 +29,11 @@ import org.eclipse.jetty.websocket.WebSocket;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+/**
+ * Adds a synchronous API for communicating with PhantomJs vai websockets. Allows calling 
+ * {@link #send(String, PhantomMessageListener)} in such a way that the call doesn't return before the
+ * tests are ran at PhantomJs and it has sent the response data.
+ */
 public class PhantomRunnerWebSocket implements WebSocket.OnTextMessage {
 
     private final AtomicReference<Connection> connection = new AtomicReference<>();
