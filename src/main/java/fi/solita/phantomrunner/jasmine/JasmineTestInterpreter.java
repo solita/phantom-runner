@@ -24,7 +24,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.htmlparser.Node;
 import org.htmlparser.Parser;
@@ -52,6 +54,9 @@ import fi.solita.phantomrunner.util.Strings;
 public class JasmineTestInterpreter extends AbstractJavascriptTestInterpreter {
 
     private static final String JASMINE_PATH_PREFIX = "test-fw/jasmine/";
+    
+    private final Map<String, String> libFilePathCache = new HashMap<>();
+    private final Map<String, String> libFileContentCache = new HashMap<>();
     
     private final ResourceLoader resLoader = new DefaultResourceLoader();
     private final File runnerFile;
@@ -146,7 +151,13 @@ public class JasmineTestInterpreter extends AbstractJavascriptTestInterpreter {
         // to dynamically adding JavaScript content due to it enforces stripping end of line characters away
         ScriptTag script = new ScriptTag();
         script.setAttribute("type", "text/javascript");
-        script.setAttribute("src", resLoader.getResource(libPath).getFile().getAbsolutePath());
+        
+        String path = libFilePathCache.get(libPath);
+        if (path == null) {
+            path = resLoader.getResource(libPath).getFile().getAbsolutePath();
+            libFilePathCache.put(libPath, path);
+        }
+        script.setAttribute("src", path);
         head.add(script);
         // really? ONLY way to close the script tag without xml ending?
         head.add(new TextNode("</SCRIPT>\n"));
@@ -155,7 +166,13 @@ public class JasmineTestInterpreter extends AbstractJavascriptTestInterpreter {
     private void injectScript(NodeList head, String libPath) throws IOException {
         ScriptTag script = new ScriptTag();
         script.setAttribute("type", "text/javascript");
-        script.setScriptCode(Strings.streamToString(resLoader.getResource(libPath).getInputStream()));
+        
+        String content = libFileContentCache.get(libPath);
+        if (content == null) {
+            content = Strings.streamToString(resLoader.getResource(libPath).getInputStream());
+            libFileContentCache.put(libPath, content);
+        }
+        script.setScriptCode(content);
         head.add(script);
         head.add(new TextNode("</SCRIPT>\n"));
     }
