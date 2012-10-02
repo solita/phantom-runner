@@ -56,7 +56,7 @@ public class JavascriptTestScanner {
     }
     
     private Iterable<File> scanForTests() {
-        List<File> foundFiles = new ArrayList<>();
+        List<File> foundFiles = new ArrayList<File>();
         for (String included : findMatchingIncludedFilePaths(ClassUtils.findClassAnnotation(PhantomConfiguration.class, testClass, true))) {
             foundFiles.add(new File(included));
         }

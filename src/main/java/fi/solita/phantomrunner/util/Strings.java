@@ -52,7 +52,7 @@ public class Strings {
     public static List<String> splitTokens(String str, String regex, int flags) {
         Pattern p = Pattern.compile(regex, flags);
         Matcher m = p.matcher(str);
-        List<String> result = new ArrayList<>();
+        List<String> result = new ArrayList<String>();
         while (m.find()) {
             result.add(m.group());
         }

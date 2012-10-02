@@ -43,7 +43,7 @@ public class JasmineSuite implements JavascriptTest {
     private final String data;
     private final ObjectMemoizer<Description, Class<?>> description;
     
-    private final List<JasmineSpec> specs = new ArrayList<>();
+    private final List<JasmineSpec> specs = new ArrayList<JasmineSpec>();
 
     public JasmineSuite(String describe, Class<?> parentTestClass) {
         this.name = Strings.firstMatch(describe, "(?<=\").*(?=\")");

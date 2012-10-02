@@ -91,7 +91,7 @@ public class JasminePhantomRunnerTest {
     private void doTestingFor(Class<?> testClass) {
         JUnitCore core = new JUnitCore();
         
-        final List<String> failedTestNames = new ArrayList<>();
+        final List<String> failedTestNames = new ArrayList<String>();
         
         core.addListener(new RunListener() {
             @Override

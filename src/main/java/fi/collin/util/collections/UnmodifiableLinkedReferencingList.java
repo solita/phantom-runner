@@ -49,22 +49,27 @@ public class UnmodifiableLinkedReferencingList<E> implements List<E> {
     private final int[] sizeCache;
     private final int size;
     
+    @SuppressWarnings("unchecked")
     public UnmodifiableLinkedReferencingList(List<E> l1) {
         this(Arrays.asList(l1));
     }
     
+    @SuppressWarnings("unchecked")
     public UnmodifiableLinkedReferencingList(List<E> l1, List<E> l2) {
         this(Arrays.asList(l1, l2));
     }
     
+    @SuppressWarnings("unchecked")
     public UnmodifiableLinkedReferencingList(List<E> l1, List<E> l2, List<E> l3) {
         this(Arrays.asList(l1, l2, l3));
     }
     
+    @SuppressWarnings("unchecked")
     public UnmodifiableLinkedReferencingList(List<E> l1, List<E> l2, List<E> l3, List<E> l4) {
         this(Arrays.asList(l1, l2, l3, l4));
     }
     
+    @SuppressWarnings("unchecked")
     public UnmodifiableLinkedReferencingList(List<E> l1, List<E> l2, List<E> l3, List<E> l4, List<E> l5) {
         this(Arrays.asList(l1, l2, l3, l4, l5));
     }

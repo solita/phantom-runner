@@ -21,7 +21,6 @@
 package fi.solita.phantomrunner;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
 
 import org.junit.runner.Description;
@@ -110,7 +109,7 @@ public class PhantomRunner extends Suite {
                         .newInstance(getTestClass().getClass());
             }
 
-        } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+        } catch (Exception e) { // had multi-catch but changed source code level to 1.6, it's evil to catch raw Exception
             throw new JavascriptInterpreterException("Couldn't create interpreter", e);
         }
     }

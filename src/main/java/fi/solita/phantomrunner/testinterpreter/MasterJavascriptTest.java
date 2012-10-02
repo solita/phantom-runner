@@ -71,7 +71,7 @@ public final class MasterJavascriptTest implements JavascriptTest {
                 }
             });
             
-            for (JavascriptTest test : new UnmodifiableLinkedReferencingList<>(testLists)) {
+            for (JavascriptTest test : new UnmodifiableLinkedReferencingList<JavascriptTest>(testLists)) {
                 cache.addChild(test.asDescription(testClass));
             }
         }
@@ -113,7 +113,7 @@ public final class MasterJavascriptTest implements JavascriptTest {
     
     private static class MasterJavascriptListener implements TestScannerListener {
         
-        private final List<JavascriptTestFile> testFiles = new ArrayList<>();
+        private final List<JavascriptTestFile> testFiles = new ArrayList<JavascriptTestFile>();
         
         @Override
         public void fileScanned(String filePath, String fileData, List<JavascriptTest> testsFromData) {

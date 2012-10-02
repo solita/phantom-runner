@@ -21,7 +21,6 @@
 package fi.solita.phantomrunner;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 
 import fi.solita.phantomrunner.testinterpreter.JavascriptTestInterpreter;
 
@@ -49,7 +48,7 @@ public class PhantomServerFactory {
                     config.serverClass(),
                     JavascriptTestInterpreter.class,
                     PhantomServerConfiguration.class));
-        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+        } catch (Exception e) { // it's evil to catch Exception but java 6 doesn't have multi-catch
             throw new RuntimeException(e);
         }
     }

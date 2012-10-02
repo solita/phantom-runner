@@ -60,8 +60,8 @@ public class JasmineTestInterpreter extends AbstractJavascriptTestInterpreter {
 
     private static final String JASMINE_PATH_PREFIX = "test-fw/jasmine/";
     
-    private final Map<String, String> libFilePathCache = new HashMap<>();
-    private final Map<String, String> libFileContentCache = new HashMap<>();
+    private final Map<String, String> libFilePathCache = new HashMap<String, String>();
+    private final Map<String, String> libFileContentCache = new HashMap<String, String>();
     
     private final ResourceLoader resLoader = new DefaultResourceLoader();
     private final File runnerFile;
@@ -111,8 +111,10 @@ public class JasmineTestInterpreter extends AbstractJavascriptTestInterpreter {
             appendScript(head, testDataUrl);
 
             return html.toHtml();
-        } catch (IOException | ParserException ioe) {
+        } catch (IOException ioe) {
             throw new RuntimeException(ioe);
+        } catch (ParserException pe) {
+            throw new RuntimeException(pe);
         }
     }
     
@@ -123,7 +125,7 @@ public class JasmineTestInterpreter extends AbstractJavascriptTestInterpreter {
 
     @Override
     protected List<JavascriptTest> createTestsFrom(String data, Class<?> testClass) {
-        List<JavascriptTest> tests = new ArrayList<>();
+        List<JavascriptTest> tests = new ArrayList<JavascriptTest>();
 
         for (String describe : JavascriptBlockUtils.findBlocks(data, "describe")) {
             if (!describe.isEmpty()) {

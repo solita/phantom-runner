@@ -21,6 +21,7 @@
 package fi.solita.phantomrunner.jetty;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.servlet.http.HttpServletRequest;
@@ -32,7 +33,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 public class PhantomWebSocketHandler extends WebSocketHandler {
 
-    private final AtomicReference<PhantomRunnerWebSocket> socket = new AtomicReference<>();
+    private final AtomicReference<PhantomRunnerWebSocket> socket = new AtomicReference<PhantomRunnerWebSocket>();
     private final Object socketLock = new Object();
     
     @Override
@@ -53,12 +54,17 @@ public class PhantomWebSocketHandler extends WebSocketHandler {
     public JsonNode sendMessageToConnections(String msg) {
         try {
             final Object requestLock = new Object();
-            final AtomicReference<JsonNode> result = new AtomicReference<>();
+            final AtomicReference<JsonNode> result = new AtomicReference<JsonNode>();
             
             synchronized (socketLock) {
                 if (socket.get() == null) {
-                    socketLock.wait(1000);
+                    // wait for 10 secs for the socket to open
+                    socketLock.wait(TimeUnit.SECONDS.toMillis(10));
                 }
+            }
+            
+            if (socket.get() == null) {
+                throw new PhantomWebSocketException("No open websocket connection available, cannot send message");
             }
     
             try {

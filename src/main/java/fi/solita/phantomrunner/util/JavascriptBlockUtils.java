@@ -34,7 +34,7 @@ public class JavascriptBlockUtils {
      * with caution.</p> 
      */
     public static List<String> findBlocks(String data, String keyword) {
-        List<String> elements = new ArrayList<>();
+        List<String> elements = new ArrayList<String>();
         
         for (int keywordIndex = data.indexOf(keyword); keywordIndex != -1; keywordIndex = data.indexOf(keyword, keywordIndex+1)) {
             int blockEndIndex = data.indexOf(");", findClosingBrace(findOpeningBrace(keywordIndex, data), data));

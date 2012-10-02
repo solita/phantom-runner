@@ -36,8 +36,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public class PhantomRunnerWebSocket implements WebSocket.OnTextMessage {
 
-    private final AtomicReference<Connection> connection = new AtomicReference<>();
-    private final List<PhantomMessageListener> listeners = new CopyOnWriteArrayList<>();
+    private final AtomicReference<Connection> connection = new AtomicReference<Connection>();
+    private final List<PhantomMessageListener> listeners = new CopyOnWriteArrayList<PhantomMessageListener>();
     private final Object socketLock = new Object();
     
     PhantomRunnerWebSocket() {

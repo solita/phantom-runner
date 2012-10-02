@@ -28,7 +28,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class ObjectMemoizer<T, P> {
 
     private final ParametrizedFactory<T, P> factory;
-    private final AtomicReference<T> instance = new AtomicReference<>();
+    private final AtomicReference<T> instance = new AtomicReference<T>();
     private final P parameter;
     
     public ObjectMemoizer(ParametrizedFactory<T, P> factory, P parameter) {
