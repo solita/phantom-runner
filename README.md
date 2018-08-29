@@ -4,7 +4,7 @@ Phantom Runner
 What it is?
 -----------
 
-Phantom Runner is a custom JUnit runner which allows user to run [Jasmine](http://pivotal.github.com/jasmine/) based JavaScript tests in the [PhantomJS](http://phantomjs.org/) headless browser. This allows a seamless integration to anything that can run JUnit tests: your favourite Java IDE (Eclipse, Netbeans, IntelliJ etc), your favourite build tool (Ant, Maven, Gradle...) or your favourite continuous integration server (Jenkins, Bamboo, Continuum...).
+Phantom Runner is a custom JUnit runner which allows user to run [Jasmine](https://jasmine.github.io/) based JavaScript tests in the [PhantomJS](http://phantomjs.org/) headless browser. This allows a seamless integration to anything that can run JUnit tests: your favourite Java IDE (Eclipse, Netbeans, IntelliJ etc), your favourite build tool (Ant, Maven, Gradle...) or your favourite continuous integration server (Jenkins, Bamboo, Continuum...).
 
 # We're at alpha! The API and functionality may change at any time. Use at your own risk.
 
